@@ -1,8 +1,8 @@
 import React from 'react'
-import { Button } from 'element-react'
 import blueprint from './images/blueprint.svg'
 import 'element-theme-default'
 import './App.css'
+import Manager from './components/Manager'
 
 function App() {
   return (
@@ -16,11 +16,15 @@ function App() {
         </div>
         <div className="mt-8 flex flex-grow">
           <div className="mr-8 w-64">
-            <Button type="primary" icon="plus" size="large">创建水印项</Button>
+            <Manager />
           </div>
           <div className="flex-grow border-2 border-dashed rounded-lg">
 
           </div>
+        </div>
+        <div className="text-white text-xs">
+          <p>https://watermark.jisuowei.com</p>
+          <p>http://w.jsw.im</p>
         </div>
       </div>
     </>
