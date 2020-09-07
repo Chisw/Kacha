@@ -10,7 +10,7 @@ export declare const MarkPosition: {
   BOTTOM_RIGHT: 'bottom-right'
 }
 
-export declare type MarkPosition = typeof MarkPosition[keyof typeof MarkPosition];
+export declare type MarkPosition = typeof MarkPosition[keyof typeof MarkPosition]
 
 export interface IMark {
   type: 'image' | 'text'
@@ -25,4 +25,12 @@ export interface IMark {
     size: number
     family: string
   }
+}
+
+export interface ISetting {
+  format: 'jpeg' | 'png' | 'webp'
+  quality: number
+  scaleType: 'none' | 'percent' | 'pixel'
+  scaleValue: number
+  saveEXIF: boolean
 }
