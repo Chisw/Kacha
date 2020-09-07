@@ -14,6 +14,7 @@ export declare type MarkPosition = typeof MarkPosition[keyof typeof MarkPosition
 
 export interface IMark {
   type: 'image' | 'text'
+  src: string
   position: MarkPosition
   width: number | string
   height: number | string
