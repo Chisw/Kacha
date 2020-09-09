@@ -34,7 +34,7 @@ export default function Manager() {
             {type === 'text' ? (
               <span className="text-white">{src}</span>
             ) : (
-              <img src={src} />
+              <img src={src} alt="img" />
             )}
           </div>
         )

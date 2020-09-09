@@ -19,7 +19,15 @@ function App() {
             <Manager />
           </div>
           <div className="flex-grow border-2 border-dashed rounded-lg">
-
+            <div className="container h-128">
+              <div className="w-full h-full flex flex-col">
+                <div className="h-3/5 flex flex-row">
+                  <div className="w-2/3 h-full bg-red-300"></div>
+                  <div className="w-1/3 h-full bg-green-300"></div>
+                </div>
+                <div className="h-2/5 bg-blue-300"></div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="container mx-auto text-white text-xs">
@@ -27,6 +35,7 @@ function App() {
           <p>http://w.jsw.im</p>
         </div>
       </div>
+
     </>
   )
 }
