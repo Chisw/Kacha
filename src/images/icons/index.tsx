@@ -4,6 +4,7 @@ import { ReactComponent as Duplicate } from './duplicate.svg'
 import { ReactComponent as Edit } from './edit.svg'
 import { ReactComponent as Delete } from './delete.svg'
 import { ReactComponent as Github } from './github.svg'
+import { ReactComponent as Tick } from './tick.svg'
 
 const iconsMap: { [KEY: string]: React.FC } = {
   Plus,
@@ -11,6 +12,7 @@ const iconsMap: { [KEY: string]: React.FC } = {
   Edit,
   Delete,
   Github,
+  Tick,
 }
 
 const Icons: { [KEY: string]: any } = {}

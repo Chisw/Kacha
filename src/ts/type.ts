@@ -1,4 +1,4 @@
-export declare const MarkPosition: {
+export declare const WatermarkPosition: {
   TOP_LEFT: 'top-left'
   TOP: 'top'
   TOP_RIGHT: 'top-right'
@@ -10,13 +10,13 @@ export declare const MarkPosition: {
   BOTTOM_RIGHT: 'bottom-right'
 }
 
-export declare type MarkPosition = typeof MarkPosition[keyof typeof MarkPosition]
+export declare type WatermarkPosition = typeof WatermarkPosition[keyof typeof WatermarkPosition]
 
-export interface IMark {
-  title: string
+export interface IWatermark {
+  id: string
   src: string
   type: 'image' | 'text'
-  position: MarkPosition
+  position: WatermarkPosition
   width: number | string
   height: number | string
   ratioLock: boolean
