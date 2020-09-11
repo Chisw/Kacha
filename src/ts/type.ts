@@ -13,8 +13,9 @@ export declare const MarkPosition: {
 export declare type MarkPosition = typeof MarkPosition[keyof typeof MarkPosition]
 
 export interface IMark {
-  type: 'image' | 'text'
+  title: string
   src: string
+  type: 'image' | 'text'
   position: MarkPosition
   width: number | string
   height: number | string
@@ -22,10 +23,7 @@ export interface IMark {
   repeat: 'none' | 'x' | 'y' | 'cover'
   opacity: number
   rotate: number
-  font: {
-    size: number
-    family: string
-  }
+  font?: string
 }
 
 export interface ISetting {
