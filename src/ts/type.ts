@@ -15,8 +15,9 @@ export declare type WatermarkPosition = typeof WatermarkPosition[keyof typeof Wa
 export interface ISetting {
   format: 'origin' | 'jpeg' | 'png' | 'webp'
   quality: number
-  scaleType: 'none' | 'percent' | 'pixel'
-  scaleValue: number
+  scaleType: 'none' | 'pixel' | 'percent'
+  scalePixel: number
+  scalePercent: number
   saveEXIF: boolean
 }
 

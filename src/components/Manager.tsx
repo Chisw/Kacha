@@ -1,8 +1,8 @@
-import React, { useRef, useCallback, useState, useEffect } from 'react'
-import { IWatermark } from '../ts/type'
+import React, { useRef, useCallback, useState } from 'react'
+import { IWatermark, ISetting } from '../ts/type'
 import Icons from '../images/icons'
-import { Button, FormGroup, RadioButtonGroup, RadioButton, Slider, NumberInput  } from 'carbon-components-react'
-import ToggleBox from './ToggleBox'
+import { Button } from 'carbon-components-react'
+import ExportSetting from './Editor/ExportSetting'
 
 const defaultWatermarkList: IWatermark[] = [
   {
@@ -21,7 +21,8 @@ const defaultWatermarkList: IWatermark[] = [
       format: 'jpeg',
       quality: .92,
       scaleType: 'none',
-      scaleValue: 1,
+      scalePixel: 1080,
+      scalePercent: 80,
       saveEXIF: false,
     }
   },
@@ -41,7 +42,8 @@ const defaultWatermarkList: IWatermark[] = [
       format: 'jpeg',
       quality: .92,
       scaleType: 'none',
-      scaleValue: 1,
+      scalePixel: 1080,
+      scalePercent: 80,
       saveEXIF: false,
     }
   },
@@ -54,20 +56,16 @@ export default function Manager() {
   const [mode, setMode] = useState<'edit'|'create'>()
   const [currentWrapper, setCurrentWrapper] = useState<HTMLDivElement>()
 
-  const [settingFormat, setSettingFormat] = useState('origin')
-  const [settingQuality, setSettingQuality] = useState(92)
-  const [settingScaleType, setSettingScaleType] = useState('none')
-  const [settingScaleValue, setSettingScaleValue] = useState(1080)
+  const [setting, setSetting] = useState<ISetting>({
+    format: 'origin',
+    quality: 92,
+    scaleType: 'none',
+    scalePixel: 1080,
+    scalePercent: 80,
+    saveEXIF: false,
+  })
 
   const editorRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (settingScaleType === 'px') {
-      setSettingScaleValue(1080)
-    } else if (settingScaleType === 'percent') {
-      setSettingScaleValue(80)
-    }
-  }, [settingScaleType])
 
   const handleWatermarkEdit = useCallback((e: any, watermarkId: string) => {
     setMode('edit')
@@ -111,8 +109,8 @@ export default function Manager() {
         div.style.display = 'none'
       }, 500)
     }
-    console.log(settingFormat)
-  }, [currentWrapper, settingFormat])
+    console.log(setting)
+  }, [currentWrapper, setting])
 
   return (
     <>
@@ -183,104 +181,10 @@ export default function Manager() {
           <h2 className="text-3xl">{mode === 'edit' ? '编辑' : '创建'}水印</h2>
           <h4 className="mt-6 mb-4 text-xl text-gray-600">水印设置</h4>
           
-          <h4 className="mt-6 mb-4 text-xl text-gray-600">导出设置</h4>
-          <div>
-
-            <FormGroup legendText="图像格式">
-              <RadioButtonGroup
-                name="format"
-                valueSelected={settingFormat}
-                onChange={(val: string) => setSettingFormat(val)}
-              >
-                <RadioButton
-                  id="origin"
-                  labelText="原格式"
-                  value="origin"
-                />
-                <RadioButton
-                  id="jpeg"
-                  labelText="JPG"
-                  value="jpeg"
-                />
-                <RadioButton
-                  id="png"
-                  labelText="PNG"
-                  value="png"
-                />
-                <RadioButton
-                  id="webp"
-                  labelText="WEBP"
-                  value="webp"
-                />
-              </RadioButtonGroup>
-            </FormGroup>
-
-            <ToggleBox isOpen={settingFormat === 'jpeg'}>
-              <FormGroup legendText="图像品质">
-                <Slider
-                  max={100}
-                  min={0}
-                  value={settingQuality}
-                  onChange={({ value }) => setSettingQuality(value)}
-                />
-              </FormGroup>
-            </ToggleBox>
-
-            <FormGroup legendText="图像缩放">
-              <RadioButtonGroup
-                name="scale"
-                valueSelected={settingScaleType}
-                onChange={(val: string) => setSettingScaleType(val)}
-              >
-                <RadioButton
-                  id="none"
-                  labelText="不缩放"
-                  value="none"
-                />
-                <RadioButton
-                  id="px"
-                  labelText="按指定像素缩放"
-                  value="px"
-                />
-                <RadioButton
-                  id="percent"
-                  labelText="按相对百分比缩放"
-                  value="percent"
-                />
-              </RadioButtonGroup>
-              <ToggleBox isOpen={settingScaleType !== 'none'}>
-                <>
-                  <div className="mt-2 flex items-center">
-                    <div className="pt-2">
-                      缩放至
-                  </div>
-                    <div className="mx-2">
-                      <NumberInput
-                        id="scale"
-                        min={0}
-                        disabled={settingScaleType === 'none'}
-                        value={settingScaleValue}
-                        onChange={(e: any) => setSettingScaleValue(e.target.value)}
-                        invalidText=""
-                      />
-                    </div>
-                    <div className="pt-2">
-                      {settingScaleType === 'px' ? 'px' : '%'}
-                    </div>
-                  </div>
-
-                  <div className="mt-2 text-xs text-gray-500 leading-relaxed">
-                    此为宽度调整，高度将按原宽高比进行相应缩放<br />
-                    最大仅支持缩放至 25600px
-                  </div>
-                </>
-              </ToggleBox>
-            </FormGroup>
-
-          </div>
+          <ExportSetting setting={setting} setSetting={setSetting} />
         </div>
         <Button onClick={() => handleEditorClose()}>保存</Button>
-        <Button kind="ghost" onClick={() => handleEditorClose()}>取消</Button>
+        <Button kind="secondary" onClick={() => handleEditorClose()}>取消</Button>
       </div>
     </>
   )
