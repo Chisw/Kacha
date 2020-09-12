@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState } from 'react'
 import { IWatermark } from '../ts/type'
 import Icons from '../images/icons'
-import { Button, FormGroup, RadioButtonGroup, RadioButton  } from 'carbon-components-react'
+import { Button, FormGroup, RadioButtonGroup, RadioButton, Slider  } from 'carbon-components-react'
 
 const defaultWatermarkList: IWatermark[] = [
   {
@@ -54,6 +54,7 @@ export default function Manager() {
   const [currentWrapper, setCurrentWrapper] = useState<HTMLDivElement>()
 
   const [settingFormat, setSettingFormat] = useState('origin')
+  const [settingQuality, setSettingQuality] = useState(92)
 
   const editorRef = useRef<HTMLDivElement>(null)
 
@@ -120,9 +121,9 @@ export default function Manager() {
                     <img src={src} alt="img" />
                   )}
                 </div>
-                <div className="absolute inset-0 opacity-0 hover:opacity-100 flex flex-col bg-black-500 bg-hazy-25 transition-all duration-200">
+                <div className="absolute inset-0 opacity-0 hover:opacity-100 flex flex-col bg-black-500 bg-hazy-25 transition-all duration-200 border border-solid border-gray-700">
                   <div
-                    className={`flex-grow flex justify-center items-center ${HOVER_CLASS} text-white text-sm`}
+                    className={`flex-grow flex justify-center items-center ${HOVER_CLASS} text-white text-sm border-b border-solid border-gray-700`}
                     onClick={() => {}}
                   >
                     <span className="flex items-center">
@@ -132,13 +133,13 @@ export default function Manager() {
                   </div>
                   <div className="flex justify-between items-center text-xs">
                     <div
-                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white`}
+                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white border-r border-solid border-gray-700`}
                       onClick={e => handleWatermarkEdit(e, id)}
                     >
                       <Icons.Edit />
                     </div>
                     <div
-                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white`}
+                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white border-r border-solid border-gray-700`}
                       onClick={() => {}}
                     >
                       <Icons.Duplicate />
@@ -165,48 +166,57 @@ export default function Manager() {
       </div>
       <div
         ref={editorRef}
-        className="watermark-editor hidden p-6 fixed z-20 bg-white shadow-lg"
-        style={{
-          transition: 'all 500ms ease-in-out',
-        }}
+        className="watermark-editor hidden fixed z-20 bg-white shadow-lg select-none transition-all duration-500"
       >
-        <h2>{mode === 'edit' ? '编辑' : '创建'}</h2>
-        <h4>水印参数</h4>
-        
-        <h4>导出参数</h4>
-        <div>
+        <div className="p-4">
+          <h2 className="text-3xl">{mode === 'edit' ? '编辑' : '创建'}水印</h2>
+          <h4 className="mt-6 mb-4 text-2xl text-gray-600">水印参数</h4>
+          
+          <h4 className="mt-6 mb-4 text-2xl text-gray-600">导出参数</h4>
+          <div>
 
-          <FormGroup legendText="导出格式">
-            <RadioButtonGroup
-              name="radio-button-group"
-              valueSelected={settingFormat}
-              onChange={(val: string) => setSettingFormat(val)}
-            >
-              <RadioButton
-                id="origin"
-                labelText="原格式"
-                value="origin"
-              />
-              <RadioButton
-                id="jpeg"
-                labelText=".jpeg"
-                value="jpeg"
-              />
-              <RadioButton
-                id="png"
-                labelText=".png"
-                value="png"
-              />
-              <RadioButton
-                id="webp"
-                labelText=".webp"
-                value="webp"
-              />
-            </RadioButtonGroup>
-          </FormGroup>
+            <FormGroup legendText="导出格式">
+              <RadioButtonGroup
+                name="radio-button-group"
+                valueSelected={settingFormat}
+                onChange={(val: string) => setSettingFormat(val)}
+              >
+                <RadioButton
+                  id="origin"
+                  labelText="原格式"
+                  value="origin"
+                />
+                <RadioButton
+                  id="jpeg"
+                  labelText=".jpg"
+                  value="jpeg"
+                />
+                <RadioButton
+                  id="png"
+                  labelText=".png"
+                  value="png"
+                />
+                <RadioButton
+                  id="webp"
+                  labelText=".webp"
+                  value="webp"
+                />
+              </RadioButtonGroup>
+            </FormGroup>
 
+            <FormGroup legendText="图像品质">
+              <Slider
+                max={100}
+                min={0}
+                value={settingQuality}
+                onChange={({ value }) => setSettingQuality(value)}
+              />
+            </FormGroup>
+
+          </div>
         </div>
         <Button onClick={() => handleEditorClose()}>保存</Button>
+        <Button kind="ghost" onClick={() => handleEditorClose()}>取消</Button>
       </div>
     </>
   )
