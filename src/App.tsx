@@ -1,7 +1,6 @@
 import React from 'react'
 import blueprint from './images/blueprint.svg'
-import 'element-theme-default'
-import './App.css'
+import './App.scss'
 import Manager from './components/Manager'
 import Icons from './images/icons'
 

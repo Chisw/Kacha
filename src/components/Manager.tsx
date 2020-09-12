@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useState } from 'react'
 import { IWatermark } from '../ts/type'
 import Icons from '../images/icons'
+import { Button, FormGroup, RadioButtonGroup, RadioButton  } from 'carbon-components-react'
 
 const defaultWatermarkList: IWatermark[] = [
   {
@@ -14,7 +15,14 @@ const defaultWatermarkList: IWatermark[] = [
     repeat: 'none',
     opacity: 1,
     rotate: 0,
-    font: ''
+    font: '',
+    setting: {
+      format: 'jpeg',
+      quality: .92,
+      scaleType: 'none',
+      scaleValue: 1,
+      saveEXIF: false,
+    }
   },
   {
     id: '44m9a8',
@@ -27,7 +35,14 @@ const defaultWatermarkList: IWatermark[] = [
     repeat: 'none',
     opacity: 1,
     rotate: 0,
-    font: ''
+    font: '',
+    setting: {
+      format: 'jpeg',
+      quality: .92,
+      scaleType: 'none',
+      scaleValue: 1,
+      saveEXIF: false,
+    }
   },
 ]
 
@@ -35,10 +50,15 @@ const HOVER_CLASS = 'hover:bg-white-100 transition-all duration-300 active:durat
 
 export default function Manager() {
 
-  const editorRef = useRef<HTMLDivElement>(null)
+  const [mode, setMode] = useState<'edit'|'create'>()
   const [currentWrapper, setCurrentWrapper] = useState<HTMLDivElement>()
 
+  const [settingFormat, setSettingFormat] = useState('origin')
+
+  const editorRef = useRef<HTMLDivElement>(null)
+
   const handleWatermarkEdit = useCallback((e: any, watermarkId: string) => {
+    setMode('edit')
     const wrapper = e.target.closest('.watermark-wrapper')
     setCurrentWrapper(wrapper)
     if (wrapper && editorRef && editorRef.current) {
@@ -79,7 +99,9 @@ export default function Manager() {
         div.style.display = 'none'
       }, 500)
     }
-  }, [currentWrapper])
+    console.log(settingFormat)
+  }, [currentWrapper, settingFormat])
+
   return (
     <>
       <div className="flex flex-wrap -mx-4">
@@ -108,15 +130,15 @@ export default function Manager() {
                       <span className="ml-1">使用该水印</span>
                     </span>
                   </div>
-                  <div className="border-t border-gray-800 flex justify-between items-center text-xs">
+                  <div className="flex justify-between items-center text-xs">
                     <div
-                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white border-r border-gray-800`}
+                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white`}
                       onClick={e => handleWatermarkEdit(e, id)}
                     >
                       <Icons.Edit />
                     </div>
                     <div
-                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white border-r border-gray-800`}
+                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white`}
                       onClick={() => {}}
                     >
                       <Icons.Duplicate />
@@ -135,7 +157,7 @@ export default function Manager() {
         })}
         <div className="mb-8 px-4 w-1/2 md:w-1/3 lg:w-1/5">
           <div
-            className="h-40 bg-gray-900 border-2 border-dashed flex justify-center items-center text-white text-6xl cursor-pointer opacity-50 hover:opacity-75 transition-all duration-200 bg-hazy-100"
+            className="h-40 bg-gray-900 border-2 border-dashed flex justify-center items-center text-white text-6xl cursor-pointer opacity-25 hover:opacity-75 transition-all duration-200 bg-hazy-100"
           >
             <Icons.Plus size={48} />
           </div>
@@ -143,12 +165,48 @@ export default function Manager() {
       </div>
       <div
         ref={editorRef}
-        className="watermark-editor hidden fixed z-20 bg-gray-500 shadow-lg"
+        className="watermark-editor hidden p-6 fixed z-20 bg-white shadow-lg"
         style={{
           transition: 'all 500ms ease-in-out',
         }}
       >
-        <span onClick={() => handleEditorClose()}>保存</span>
+        <h2>{mode === 'edit' ? '编辑' : '创建'}</h2>
+        <h4>水印参数</h4>
+        
+        <h4>导出参数</h4>
+        <div>
+
+          <FormGroup legendText="导出格式">
+            <RadioButtonGroup
+              name="radio-button-group"
+              valueSelected={settingFormat}
+              onChange={(val: string) => setSettingFormat(val)}
+            >
+              <RadioButton
+                id="origin"
+                labelText="原格式"
+                value="origin"
+              />
+              <RadioButton
+                id="jpeg"
+                labelText=".jpeg"
+                value="jpeg"
+              />
+              <RadioButton
+                id="png"
+                labelText=".png"
+                value="png"
+              />
+              <RadioButton
+                id="webp"
+                labelText=".webp"
+                value="webp"
+              />
+            </RadioButtonGroup>
+          </FormGroup>
+
+        </div>
+        <Button onClick={() => handleEditorClose()}>保存</Button>
       </div>
     </>
   )
