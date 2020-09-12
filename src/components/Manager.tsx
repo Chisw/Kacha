@@ -1,7 +1,8 @@
-import React, { useRef, useCallback, useState } from 'react'
+import React, { useRef, useCallback, useState, useEffect } from 'react'
 import { IWatermark } from '../ts/type'
 import Icons from '../images/icons'
-import { Button, FormGroup, RadioButtonGroup, RadioButton, Slider  } from 'carbon-components-react'
+import { Button, FormGroup, RadioButtonGroup, RadioButton, Slider, NumberInput  } from 'carbon-components-react'
+import ToggleBox from './ToggleBox'
 
 const defaultWatermarkList: IWatermark[] = [
   {
@@ -55,8 +56,18 @@ export default function Manager() {
 
   const [settingFormat, setSettingFormat] = useState('origin')
   const [settingQuality, setSettingQuality] = useState(92)
+  const [settingScaleType, setSettingScaleType] = useState('none')
+  const [settingScaleValue, setSettingScaleValue] = useState(1080)
 
   const editorRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (settingScaleType === 'px') {
+      setSettingScaleValue(1080)
+    } else if (settingScaleType === 'percent') {
+      setSettingScaleValue(80)
+    }
+  }, [settingScaleType])
 
   const handleWatermarkEdit = useCallback((e: any, watermarkId: string) => {
     setMode('edit')
@@ -170,14 +181,14 @@ export default function Manager() {
       >
         <div className="p-4">
           <h2 className="text-3xl">{mode === 'edit' ? '编辑' : '创建'}水印</h2>
-          <h4 className="mt-6 mb-4 text-2xl text-gray-600">水印参数</h4>
+          <h4 className="mt-6 mb-4 text-xl text-gray-600">水印设置</h4>
           
-          <h4 className="mt-6 mb-4 text-2xl text-gray-600">导出参数</h4>
+          <h4 className="mt-6 mb-4 text-xl text-gray-600">导出设置</h4>
           <div>
 
-            <FormGroup legendText="导出格式">
+            <FormGroup legendText="图像格式">
               <RadioButtonGroup
-                name="radio-button-group"
+                name="format"
                 valueSelected={settingFormat}
                 onChange={(val: string) => setSettingFormat(val)}
               >
@@ -188,29 +199,82 @@ export default function Manager() {
                 />
                 <RadioButton
                   id="jpeg"
-                  labelText=".jpg"
+                  labelText="JPG"
                   value="jpeg"
                 />
                 <RadioButton
                   id="png"
-                  labelText=".png"
+                  labelText="PNG"
                   value="png"
                 />
                 <RadioButton
                   id="webp"
-                  labelText=".webp"
+                  labelText="WEBP"
                   value="webp"
                 />
               </RadioButtonGroup>
             </FormGroup>
 
-            <FormGroup legendText="图像品质">
-              <Slider
-                max={100}
-                min={0}
-                value={settingQuality}
-                onChange={({ value }) => setSettingQuality(value)}
-              />
+            <ToggleBox isOpen={settingFormat === 'jpeg'}>
+              <FormGroup legendText="图像品质">
+                <Slider
+                  max={100}
+                  min={0}
+                  value={settingQuality}
+                  onChange={({ value }) => setSettingQuality(value)}
+                />
+              </FormGroup>
+            </ToggleBox>
+
+            <FormGroup legendText="图像缩放">
+              <RadioButtonGroup
+                name="scale"
+                valueSelected={settingScaleType}
+                onChange={(val: string) => setSettingScaleType(val)}
+              >
+                <RadioButton
+                  id="none"
+                  labelText="不缩放"
+                  value="none"
+                />
+                <RadioButton
+                  id="px"
+                  labelText="按指定像素缩放"
+                  value="px"
+                />
+                <RadioButton
+                  id="percent"
+                  labelText="按相对百分比缩放"
+                  value="percent"
+                />
+              </RadioButtonGroup>
+              <ToggleBox isOpen={settingScaleType !== 'none'}>
+                <>
+                  <div className="mt-2 flex items-center">
+                    <div className="pt-2">
+                      缩放至
+                  </div>
+                    <div className="mx-2">
+                      <NumberInput
+                        id="scale"
+                        min={0}
+                        disabled={settingScaleType === 'none'}
+                        value={settingScaleValue}
+                        onChange={(e: any) => setSettingScaleValue(e.target.value)}
+                        invalidText=""
+                      />
+                    </div>
+                    <div className="pt-2">
+                      {settingScaleType === 'px' ? 'px' : '%'}
+                    </div>
+                  </div>
+
+                  <div className="mt-2 text-xs text-gray-500 leading-relaxed">
+                    此为宽度调整，高度将按原宽高比进行相应缩放<br />
+                    最大仅支持缩放至 25600px
+                  </div>
+                </>
+              </ToggleBox>
             </FormGroup>
 
           </div>
