@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useState } from 'react'
-import { IWatermark, ISetting } from '../ts/type'
+import { IWatermark, IExportSetting } from '../ts/type'
 import Icons from '../images/icons'
 import { Button } from 'carbon-components-react'
 import ExportSetting from './Editor/ExportSetting'
@@ -17,7 +17,7 @@ const defaultWatermarkList: IWatermark[] = [
     opacity: 1,
     rotate: 0,
     font: '',
-    setting: {
+    exportSetting: {
       format: 'jpeg',
       quality: .92,
       scaleType: 'none',
@@ -38,7 +38,7 @@ const defaultWatermarkList: IWatermark[] = [
     opacity: 1,
     rotate: 0,
     font: '',
-    setting: {
+    exportSetting: {
       format: 'jpeg',
       quality: .92,
       scaleType: 'none',
@@ -56,7 +56,7 @@ export default function Manager() {
   const [mode, setMode] = useState<'edit'|'create'>()
   const [currentWrapper, setCurrentWrapper] = useState<HTMLDivElement>()
 
-  const [setting, setSetting] = useState<ISetting>({
+  const [exportSetting, setExportSetting] = useState<IExportSetting>({
     format: 'origin',
     quality: 92,
     scaleType: 'none',
@@ -109,8 +109,8 @@ export default function Manager() {
         div.style.display = 'none'
       }, 500)
     }
-    console.log(setting)
-  }, [currentWrapper, setting])
+    console.log(exportSetting)
+  }, [currentWrapper, exportSetting])
 
   return (
     <>
@@ -181,7 +181,11 @@ export default function Manager() {
           <h2 className="text-3xl">{mode === 'edit' ? '编辑' : '创建'}水印</h2>
           <h4 className="mt-6 mb-4 text-xl text-gray-600">水印设置</h4>
           
-          <ExportSetting setting={setting} setSetting={setSetting} />
+          <ExportSetting
+            exportSetting={exportSetting}
+            setExportSetting={setExportSetting}
+          />
+          
         </div>
         <Button onClick={() => handleEditorClose()}>保存</Button>
         <Button kind="secondary" onClick={() => handleEditorClose()}>取消</Button>

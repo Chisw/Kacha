@@ -12,7 +12,7 @@ export declare const WatermarkPosition: {
 
 export declare type WatermarkPosition = typeof WatermarkPosition[keyof typeof WatermarkPosition]
 
-export interface ISetting {
+export interface IExportSetting {
   format: 'origin' | 'jpeg' | 'png' | 'webp'
   quality: number
   scaleType: 'none' | 'pixel' | 'percent'
@@ -33,5 +33,5 @@ export interface IWatermark {
   opacity: number
   rotate: number
   font?: string
-  setting: ISetting
+  exportSetting: IExportSetting
 }
