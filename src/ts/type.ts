@@ -12,6 +12,7 @@ export interface IWatermark {
   type: 'image' | 'text'
   src: string
   text: string
+  font?: string
   position: 'top-left' | 'top' | 'top-right' | 'left' | 'center' | 'right' | 'bottom-left' | 'bottom' | 'bottom-right'
   scaleType: 'none' | 'pixel' | 'percent'
   scalePixel: number
@@ -24,6 +25,5 @@ export interface IWatermark {
   repeat: 'none' | 'x' | 'y' | 'cover'
   opacity: number
   rotate: number
-  font?: string
   exportSetting?: IExportSetting
 }

@@ -12,7 +12,7 @@ export default function App() {
         style={{ backgroundImage: `url(${blueprint}), linear-gradient(0, rgba(74, 85, 104), rgba(0, 0, 0))` }}
       >
         <div className="container mx-auto flex justify-between items-center">
-          <h2 className="text-white text-4xl font-bold">咔嚓水印</h2>
+          <h2 className="text-white text-4xl font-bold">Kacha 咔嚓水印 - 开发中</h2>
           <div>
             <a href="https://github.com/Chisw/Watermark" target="_blank" className="text-white opacity-75 hover:opacity-100 transition-all duration-200" rel="noopener noreferrer">
               <Icons.Github size={32} />
@@ -23,8 +23,8 @@ export default function App() {
           <Manager />
         </div>
         <div className="container mx-auto py-4 text-white text-xs opacity-50">
-          <p>https://watermark.jisuowei.com</p>
-          <p>http://w.jsw.im</p>
+          <p>https://kacha.jisuowei.com</p>
+          <p>http://k.jsw.im</p>
         </div>
       </div>
     </>
