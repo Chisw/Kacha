@@ -1,17 +1,3 @@
-export declare const WatermarkPosition: {
-  TOP_LEFT: 'top-left'
-  TOP: 'top'
-  TOP_RIGHT: 'top-right'
-  LEFT: 'left'
-  CENTER: 'center'
-  RIGHT: 'right'
-  BOTTOM_LEFT: 'bottom-left'
-  BOTTOM: 'bottom'
-  BOTTOM_RIGHT: 'bottom-right'
-}
-
-export declare type WatermarkPosition = typeof WatermarkPosition[keyof typeof WatermarkPosition]
-
 export interface IExportSetting {
   format: 'origin' | 'jpeg' | 'png' | 'webp'
   quality: number
@@ -23,9 +9,10 @@ export interface IExportSetting {
 
 export interface IWatermark {
   id: string
-  src: string
   type: 'image' | 'text'
-  position: WatermarkPosition
+  src: string
+  text: string
+  position: 'top-left' | 'top' | 'top-right' | 'left' | 'center' | 'right' | 'bottom-left' | 'bottom' | 'bottom-right'
   width: number | string
   height: number | string
   ratioLock: boolean
@@ -33,5 +20,5 @@ export interface IWatermark {
   opacity: number
   rotate: number
   font?: string
-  exportSetting: IExportSetting
+  exportSetting?: IExportSetting
 }

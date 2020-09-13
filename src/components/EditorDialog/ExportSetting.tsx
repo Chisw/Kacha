@@ -33,8 +33,7 @@ export default function ExportSetting(props: ExportSettingProps) {
 
   return (
     <>
-      <h4 className="mt-6 mb-4 text-xl text-gray-600">导出设置</h4>
-      <div>
+      <div className="mt-4">
         <FormGroup legendText="图像格式">
           <RadioButtonGroup
             name="format"
@@ -97,41 +96,39 @@ export default function ExportSetting(props: ExportSettingProps) {
               value="percent"
             />
           </RadioButtonGroup>
-          <ToggleBox isOpen={scaleType !== 'none'}>
-            <>
-              <div className="mt-2 flex items-center">
-                <div className="pt-2">
-                  缩放至
-                </div>
-                <div className="mx-2">
-                  <NumberInput
-                    id="scale"
-                    min={0}
-                    max={25600}
-                    step={1}
-                    ref={scaleInputRef}
-                    value={scaleType === 'pixel' ? scalePixel : scalePercent}
-                    onChange={() => {
-                      const value = Number(get(scaleInputRef, 'current.value'))
-                      if (!isNaN(value)) {
-                        const key = scaleType === 'pixel' ? 'scalePixel' : 'scalePercent'
-                        _setExportSetting(key, value)
-                      }
-                    }}
-                    invalidText=""
-                  />
-                </div>
-                <div className="pt-2">
-                  {scaleType === 'pixel' ? 'px' : '%'}
-                </div>
-              </div>
-              <div className="mt-2 text-xs text-gray-500 leading-relaxed">
-                此为宽度调整，高度将按原宽高比进行相应缩放<br />
-                最大仅支持缩放至 25600px
-              </div>
-            </>
-          </ToggleBox>
         </FormGroup>
+
+        <ToggleBox isOpen={scaleType !== 'none'}>
+          <FormGroup legendText="缩放至">
+            <div className="flex items-center">
+              <div className="mr-2">
+                <NumberInput
+                  id="scale"
+                  min={0}
+                  max={25600}
+                  step={1}
+                  invalidText=""
+                  ref={scaleInputRef}
+                  value={scaleType === 'pixel' ? scalePixel : scalePercent}
+                  onChange={() => {
+                    const value = Number(get(scaleInputRef, 'current.value'))
+                    if (!isNaN(value)) {
+                      const key = scaleType === 'pixel' ? 'scalePixel' : 'scalePercent'
+                      _setExportSetting(key, value)
+                    }
+                  }}
+                />
+              </div>
+              <div className="pt-2">
+                {scaleType === 'pixel' ? 'px' : '%'}
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-gray-500 leading-relaxed">
+              此为宽度调整，高度将按原宽高比进行相应缩放<br />
+              最大仅支持缩放至 25600px
+            </div>
+          </FormGroup>
+        </ToggleBox>
 
         <FormGroup legendText="EXIF 信息">
           <Checkbox

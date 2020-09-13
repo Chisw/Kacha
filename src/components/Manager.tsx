@@ -1,121 +1,28 @@
-import React, { useRef, useCallback, useState } from 'react'
-import { IWatermark, IExportSetting } from '../ts/type'
+import React, { useCallback, useState } from 'react'
 import Icons from '../images/icons'
-import { Button } from 'carbon-components-react'
-import ExportSetting from './Editor/ExportSetting'
-
-const defaultWatermarkList: IWatermark[] = [
-  {
-    id: 'bj93tu',
-    src: 'jisuowei.com',
-    type: 'text',
-    position: 'bottom-right',
-    width: '80px',
-    height: '20px',
-    ratioLock: true,
-    repeat: 'none',
-    opacity: 1,
-    rotate: 0,
-    font: '',
-    exportSetting: {
-      format: 'jpeg',
-      quality: .92,
-      scaleType: 'none',
-      scalePixel: 1080,
-      scalePercent: 80,
-      saveEXIF: false,
-    }
-  },
-  {
-    id: '44m9a8',
-    src: 'jisuowei.com',
-    type: 'text',
-    position: 'bottom-right',
-    width: '80px',
-    height: '20px',
-    ratioLock: true,
-    repeat: 'none',
-    opacity: 1,
-    rotate: 0,
-    font: '',
-    exportSetting: {
-      format: 'jpeg',
-      quality: .92,
-      scaleType: 'none',
-      scalePixel: 1080,
-      scalePercent: 80,
-      saveEXIF: false,
-    }
-  },
-]
+import { DEFAULT_WATERMARK_LIST } from '../ts/constant'
+import EditorDialog from './EditorDialog'
 
 const HOVER_CLASS = 'hover:bg-white-100 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
 export default function Manager() {
 
-  const [mode, setMode] = useState<'edit'|'create'>()
-  const [currentWrapper, setCurrentWrapper] = useState<HTMLDivElement>()
+  const [activeWatermarkId, setActiveWatermarkId] = useState('')
+  const [editorOpen, setEditorOpen] = useState(false)
 
-  const [exportSetting, setExportSetting] = useState<IExportSetting>({
-    format: 'origin',
-    quality: 92,
-    scaleType: 'none',
-    scalePixel: 1080,
-    scalePercent: 80,
-    saveEXIF: false,
-  })
-
-  const editorRef = useRef<HTMLDivElement>(null)
-
-  const handleWatermarkEdit = useCallback((e: any, watermarkId: string) => {
-    setMode('edit')
-    const wrapper = e.target.closest('.watermark-wrapper')
-    setCurrentWrapper(wrapper)
-    if (wrapper && editorRef && editorRef.current) {
-      const rect = wrapper.getBoundingClientRect()
-      const { x, y, width, height } = rect
-      const right = document.body.clientWidth - x - width
-      const bottom = document.body.clientHeight - y - height
-      const div = editorRef.current
-      div.style.display = 'block'
-      div.style.top = `${y}px`
-      div.style.right = `${right}px`
-      div.style.bottom = `${bottom}px`
-      div.style.left = `${x}px`
-      div.style.opacity = '0'
-      setTimeout(() => {
-        div.style.top = '40px'
-        div.style.right = '40px'
-        div.style.bottom = '40px'
-        div.style.left = '40px'
-        div.style.opacity = '1'
-      }, 1)
-    }
+  const handleWatermarkEdit = useCallback((watermarkId: string) => {
+    setActiveWatermarkId(watermarkId)
+    setEditorOpen(true)
   }, [])
 
   const handleEditorClose = useCallback(() => {
-    if (currentWrapper && editorRef && editorRef.current) {
-      const rect = currentWrapper.getBoundingClientRect()
-      const { x, y, width, height } = rect
-      const right = document.body.clientWidth - x - width
-      const bottom = document.body.clientHeight - y - height
-      const div = editorRef.current
-      div.style.top = `${y}px`
-      div.style.right = `${right}px`
-      div.style.bottom = `${bottom}px`
-      div.style.left = `${x}px`
-      div.style.opacity = '0'
-      setTimeout(() => {
-        div.style.display = 'none'
-      }, 500)
-    }
-    console.log(exportSetting)
-  }, [currentWrapper, exportSetting])
+    setEditorOpen(false)
+  }, [])
 
   return (
     <>
       <div className="flex flex-wrap -mx-4">
-        {defaultWatermarkList.map((watermark, index) => {
+        {DEFAULT_WATERMARK_LIST.map((watermark, index) => {
           const { id, type, src } = watermark
           return (
             <div
@@ -143,7 +50,7 @@ export default function Manager() {
                   <div className="flex justify-between items-center text-xs">
                     <div
                       className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white border-r border-solid border-gray-700`}
-                      onClick={e => handleWatermarkEdit(e, id)}
+                      onClick={() => handleWatermarkEdit(id)}
                     >
                       <Icons.Edit />
                     </div>
@@ -173,23 +80,11 @@ export default function Manager() {
           </div>
         </div>
       </div>
-      <div
-        ref={editorRef}
-        className="watermark-editor hidden fixed z-20 bg-white shadow-lg select-none transition-all duration-500"
-      >
-        <div className="p-4">
-          <h2 className="text-3xl">{mode === 'edit' ? '编辑' : '创建'}水印</h2>
-          <h4 className="mt-6 mb-4 text-xl text-gray-600">水印设置</h4>
-          
-          <ExportSetting
-            exportSetting={exportSetting}
-            setExportSetting={setExportSetting}
-          />
-          
-        </div>
-        <Button onClick={() => handleEditorClose()}>保存</Button>
-        <Button kind="secondary" onClick={() => handleEditorClose()}>取消</Button>
-      </div>
+      <EditorDialog
+        open={editorOpen}
+        watermarkId={activeWatermarkId}
+        onClose={handleEditorClose}
+      />
     </>
   )
 }

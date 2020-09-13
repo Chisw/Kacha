@@ -12,7 +12,7 @@ export default function App() {
         style={{ backgroundImage: `url(${blueprint}), linear-gradient(0, rgba(74, 85, 104), rgba(0, 0, 0))` }}
       >
         <div className="container mx-auto flex justify-between items-center">
-          <h2 className="text-white text-4xl font-bold">水印大师</h2>
+          <h2 className="text-white text-4xl font-bold">咔嚓水印</h2>
           <div className="text-white">
             <a href="https://github.com/Chisw/Watermark" target="_blank" className="opacity-25 hover:opacity-75 transition-all duration-200" rel="noopener noreferrer">
               <Icons.Github size={24} />

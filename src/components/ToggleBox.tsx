@@ -18,7 +18,7 @@ export default function ToggleBox(props: ToggleBoxProps) {
   
   return (
     <div
-      className={`${className} overflow-hidden transition-all duration-500`}
+      className={`${className} overflow-hidden transition-all duration-500 ease-in-out`}
       style={{ maxHeight: isOpen ? maxHeight : 0 }}
     >
       {children}

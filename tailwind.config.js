@@ -56,7 +56,7 @@ module.exports = {
 
       }, base, extra),
       width: Object.assign({
-
+        '36': '9rem',
       }, extra),
       height: Object.assign({
 
