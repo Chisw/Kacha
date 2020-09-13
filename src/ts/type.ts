@@ -13,9 +13,14 @@ export interface IWatermark {
   src: string
   text: string
   position: 'top-left' | 'top' | 'top-right' | 'left' | 'center' | 'right' | 'bottom-left' | 'bottom' | 'bottom-right'
-  width: number | string
-  height: number | string
-  ratioLock: boolean
+  scaleType: 'none' | 'pixel' | 'percent'
+  scalePixel: number
+  scalePercent: number
+  offsetType: 'none' | 'pixel' | 'percent'
+  offsetPixelX: number
+  offsetPixelY: number
+  offsetPercentX: number
+  offsetPercentY: number
   repeat: 'none' | 'x' | 'y' | 'cover'
   opacity: number
   rotate: number

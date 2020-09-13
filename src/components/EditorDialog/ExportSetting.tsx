@@ -76,23 +76,23 @@ export default function ExportSetting(props: ExportSettingProps) {
 
         <FormGroup legendText="图像缩放">
           <RadioButtonGroup
-            name="scale"
+            name="export-scale"
             valueSelected={scaleType}
             onChange={(value: string) => _setExportSetting('scaleType', value)}
           >
             <RadioButton
-              id="none"
+              id="export-scale-none"
               labelText="不缩放"
               value="none"
             />
             <RadioButton
-              id="pixel"
-              labelText="按指定像素缩放"
+              id="export-scale-pixel"
+              labelText="固定像素"
               value="pixel"
             />
             <RadioButton
-              id="percent"
-              labelText="按相对百分比缩放"
+              id="export-scale-percent"
+              labelText="相对百分比"
               value="percent"
             />
           </RadioButtonGroup>
@@ -103,7 +103,7 @@ export default function ExportSetting(props: ExportSettingProps) {
             <div className="flex items-center">
               <div className="mr-2">
                 <NumberInput
-                  id="scale"
+                  id="export-scale-value"
                   min={0}
                   max={25600}
                   step={1}
@@ -133,7 +133,7 @@ export default function ExportSetting(props: ExportSettingProps) {
         <FormGroup legendText="EXIF 信息">
           <Checkbox
             id="exif"
-            labelText="保留原图的 EXIF 信息"
+            labelText="保留原图 EXIF 信息"
             checked={saveEXIF}
             onChange={(value: boolean) => _setExportSetting('saveEXIF', value)}
           />

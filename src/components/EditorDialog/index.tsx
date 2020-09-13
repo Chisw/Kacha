@@ -24,9 +24,14 @@ export default function EditorDialog(props: EditorDialogProps) {
     src: 'jisuowei.com',
     text: '',
     position: 'bottom-right',
-    width: '80px',
-    height: '20px',
-    ratioLock: true,
+    scaleType: 'none',
+    scalePixel: 200,
+    scalePercent: 20,
+    offsetType: 'none',
+    offsetPixelX: 20,
+    offsetPixelY: 20,
+    offsetPercentX: 5,
+    offsetPercentY: 5,
     repeat: 'none',
     opacity: 1,
     rotate: 0,
@@ -70,12 +75,22 @@ export default function EditorDialog(props: EditorDialogProps) {
       </Modal>
       <style>
         {`
+          .bx--modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0;
+            padding-top: 0;
+            width: 100%;
+          }
+          .bx--modal-header .bx--modal-close {
+            position: static;
+          }
           .bx--modal-content {
+            margin-bottom: 0;
+            padding: 0 1rem;
             width: 100%;
             background-color: #fff;
-          }
-          .bx--modal-container {
-            max-width: none;
           }
         `}
       </style>

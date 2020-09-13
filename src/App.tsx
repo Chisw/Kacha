@@ -13,13 +13,13 @@ export default function App() {
       >
         <div className="container mx-auto flex justify-between items-center">
           <h2 className="text-white text-4xl font-bold">咔嚓水印</h2>
-          <div className="text-white">
-            <a href="https://github.com/Chisw/Watermark" target="_blank" className="opacity-25 hover:opacity-75 transition-all duration-200" rel="noopener noreferrer">
-              <Icons.Github size={24} />
+          <div>
+            <a href="https://github.com/Chisw/Watermark" target="_blank" className="text-white opacity-75 hover:opacity-100 transition-all duration-200" rel="noopener noreferrer">
+              <Icons.Github size={32} />
             </a>
           </div>
         </div>
-        <div className="container mx-auto mt-8 flex-grow">
+        <div className="container mx-auto mt-12 flex-grow">
           <Manager />
         </div>
         <div className="container mx-auto py-4 text-white text-xs opacity-50">

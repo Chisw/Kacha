@@ -37,9 +37,9 @@ export default function Manager() {
                     <img src={src} alt="img" />
                   )}
                 </div>
-                <div className="absolute inset-0 opacity-0 hover:opacity-100 flex flex-col bg-black-500 bg-hazy-25 transition-all duration-200 border border-solid border-gray-700">
+                <div className="absolute inset-0 opacity-0 hover:opacity-100 flex flex-col bg-black-500 bg-hazy-25 transition-all duration-200 border border-solid border-gray-800">
                   <div
-                    className={`flex-grow flex justify-center items-center ${HOVER_CLASS} text-white text-sm border-b border-solid border-gray-700`}
+                    className={`flex-grow flex justify-center items-center ${HOVER_CLASS} text-white text-sm border-b border-solid border-gray-800`}
                     onClick={() => {}}
                   >
                     <span className="flex items-center">
@@ -49,13 +49,13 @@ export default function Manager() {
                   </div>
                   <div className="flex justify-between items-center text-xs">
                     <div
-                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white border-r border-solid border-gray-700`}
+                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white border-r border-solid border-gray-800`}
                       onClick={() => handleWatermarkEdit(id)}
                     >
                       <Icons.Edit />
                     </div>
                     <div
-                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white border-r border-solid border-gray-700`}
+                      className={`py-2 flex-grow flex justify-center ${HOVER_CLASS} text-white border-r border-solid border-gray-800`}
                       onClick={() => {}}
                     >
                       <Icons.Duplicate />
