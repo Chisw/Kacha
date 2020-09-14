@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react'
 import Icons from '../images/icons'
 import { DEFAULT_WATERMARK_LIST } from '../ts/constant'
 import EditorDialog from './EditorDialog'
+import { Button } from 'carbon-components-react'
 
 const HOVER_CLASS = 'hover:bg-white-100 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -78,6 +79,10 @@ export default function Manager() {
           >
             <Icons.Plus size={48} />
           </div>
+        </div>
+        <div className="px-4 w-full pb-2">
+          <Button small>导出水印</Button>
+          <Button small kind="secondary">导入水印</Button>
         </div>
       </div>
       <EditorDialog

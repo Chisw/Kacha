@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react'
 import { IWatermark } from '../../ts/type'
-import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput } from 'carbon-components-react'
+import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput, Slider } from 'carbon-components-react'
 import { FileUploader} from 'carbon-components-react'
 import ToggleBox from '../ToggleBox'
 import { get } from 'lodash'
@@ -29,6 +29,9 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     offsetPixelY,
     offsetPercentX,
     offsetPercentY,
+    repeat,
+    opacity,
+    rotate,
   } = watermark
 
   const scaleInputRef = useRef<any>(null)
@@ -42,7 +45,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
   return (
     <>
       <div className="mt-4 flex">
-        <div className="w-1/2 pr-8">
+        <div className="w-1/2 pr-4">
           <FormGroup legendText="水印类型">
             <RadioButtonGroup
               name="type"
@@ -91,61 +94,6 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               onSelect={p => _setWatermarkSetting('position', p)}
             />
           </FormGroup>
-
-          <FormGroup legendText="水印缩放">
-            <RadioButtonGroup
-              name="watermark-scale"
-              valueSelected={scaleType}
-              onChange={(value: string) => _setWatermarkSetting('scaleType', value)}
-            >
-              <RadioButton
-                id="watermark-scale-none"
-                labelText="不缩放"
-                value="none"
-              />
-              <RadioButton
-                id="watermark-scale-pixel"
-                labelText="固定像素"
-                value="pixel"
-              />
-              <RadioButton
-                id="watermark-scale-percent"
-                labelText="相对百分比"
-                value="percent"
-              />
-            </RadioButtonGroup>
-          </FormGroup>
-
-          <ToggleBox isOpen={scaleType !== 'none'}>
-            <FormGroup legendText="缩放至">
-              <div className="flex items-center">
-                <div className="mr-2">
-                  <NumberInput
-                    id="watermark-scale-value"
-                    min={1}
-                    max={25600}
-                    step={1}
-                    invalidText=""
-                    ref={scaleInputRef}
-                    value={scaleType === 'pixel' ? scalePixel : scalePercent}
-                    onChange={() => {
-                      const value = Number(get(scaleInputRef, 'current.value'))
-                      if (!isNaN(value)) {
-                        const key = scaleType === 'pixel' ? 'scalePixel' : 'scalePercent'
-                        _setWatermarkSetting(key, value)
-                      }
-                    }}
-                  />
-                </div>
-                <div className="pt-2">
-                  {scaleType === 'pixel' ? 'px' : '%'}
-                </div>
-              </div>
-              <div className="mt-2 text-xs text-gray-500 leading-relaxed">
-                此为宽度调整，高度将按原宽高比进行相应缩放
-              </div>
-            </FormGroup>
-          </ToggleBox>
 
           <FormGroup legendText="位置偏移">
             <RadioButtonGroup
@@ -223,6 +171,122 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               </div>
             </FormGroup>
           </ToggleBox>
+
+          <FormGroup legendText="水印缩放">
+            <RadioButtonGroup
+              name="watermark-scale"
+              valueSelected={scaleType}
+              onChange={(value: string) => _setWatermarkSetting('scaleType', value)}
+            >
+              <RadioButton
+                id="watermark-scale-none"
+                labelText="不缩放"
+                value="none"
+              />
+              <RadioButton
+                id="watermark-scale-pixel"
+                labelText="固定像素"
+                value="pixel"
+              />
+              <RadioButton
+                id="watermark-scale-percent"
+                labelText="相对百分比"
+                value="percent"
+              />
+            </RadioButtonGroup>
+          </FormGroup>
+
+          <ToggleBox isOpen={scaleType !== 'none'}>
+            <FormGroup legendText="缩放至">
+              <div className="flex items-center">
+                <div className="mr-2">
+                  <NumberInput
+                    id="watermark-scale-value"
+                    min={1}
+                    max={25600}
+                    step={1}
+                    invalidText=""
+                    ref={scaleInputRef}
+                    value={scaleType === 'pixel' ? scalePixel : scalePercent}
+                    onChange={() => {
+                      const value = Number(get(scaleInputRef, 'current.value'))
+                      if (!isNaN(value)) {
+                        const key = scaleType === 'pixel' ? 'scalePixel' : 'scalePercent'
+                        _setWatermarkSetting(key, value)
+                      }
+                    }}
+                  />
+                </div>
+                <div className="pt-2">
+                  {scaleType === 'pixel' ? 'px' : '%'}
+                </div>
+              </div>
+              <div className="mt-2 text-xs text-gray-500 leading-relaxed">
+                此为宽度调整，高度将按原宽高比进行相应缩放
+              </div>
+            </FormGroup>
+          </ToggleBox>
+
+          <FormGroup legendText="重复">
+            <RadioButtonGroup
+              name="watermark-repeat"
+              valueSelected={repeat}
+              onChange={(value: string) => _setWatermarkSetting('repeat', value)}
+            >
+              <RadioButton
+                id="watermark-repeat-none"
+                labelText="不重复"
+                value="none"
+              />
+              <RadioButton
+                id="watermark-repeat-x"
+                labelText="横向"
+                value="x"
+              />
+              <RadioButton
+                id="watermark-repeat-y"
+                labelText="纵向"
+                value="y"
+              />
+              <RadioButton
+                id="watermark-repeat-cover"
+                labelText="覆盖"
+                value="cover"
+              />
+            </RadioButtonGroup>
+          </FormGroup>
+
+          <FormGroup legendText="透明度">
+            <div className="flex items-center">
+              <div className="mr-2">
+                <Slider
+                  min={0}
+                  max={100}
+                  value={opacity}
+                  onChange={({ value }) => _setWatermarkSetting('opacity', value)}
+                />
+              </div>
+              <div className="pt-2">
+                %
+              </div>
+            </div>
+          </FormGroup>
+
+          <FormGroup legendText="旋转">
+            <div className="flex items-center">
+              <div className="mr-2">
+                <Slider
+                  min={0}
+                  max={360}
+                  value={rotate}
+                  onChange={({ value }) => _setWatermarkSetting('rotate', value)}
+                />
+              </div>
+              <div className="pt-2">
+                °
+              </div>
+            </div>
+          </FormGroup>
 
         </div>
         <div className="w-1/2">

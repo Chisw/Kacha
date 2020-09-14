@@ -5,6 +5,8 @@ import { ReactComponent as Edit } from './edit.svg'
 import { ReactComponent as Delete } from './delete.svg'
 import { ReactComponent as Github } from './github.svg'
 import { ReactComponent as Tick } from './tick.svg'
+import { ReactComponent as Download } from './download.svg'
+import { ReactComponent as Upload } from './upload.svg'
 
 const iconsMap: { [KEY: string]: React.FC } = {
   Plus,
@@ -13,6 +15,8 @@ const iconsMap: { [KEY: string]: React.FC } = {
   Delete,
   Github,
   Tick,
+  Download,
+  Upload,
 }
 
 const Icons: { [KEY: string]: any } = {}
