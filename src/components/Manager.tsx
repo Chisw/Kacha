@@ -75,7 +75,8 @@ export default function Manager() {
         })}
         <div className="mb-8 px-4 w-1/2 md:w-1/3 lg:w-1/5">
           <div
-            className="h-40 bg-gray-900 border-2 border-dashed flex justify-center items-center text-white text-6xl cursor-pointer opacity-25 hover:opacity-75 transition-all duration-200 bg-hazy-100"
+            className={`h-40 bg-gray-900 border-2 border-dashed flex justify-center items-center text-white text-6xl cursor-pointer
+              opacity-25 hover:opacity-75 transition-all duration-200 bg-hazy-100 active:duration-75 active:opacity-25`}
           >
             <Icons.Plus size={48} />
           </div>

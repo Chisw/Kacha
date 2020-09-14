@@ -120,6 +120,7 @@ module.exports = {
   },
   variants: {
     backgroundColor: ['hover', 'active'],
+    opacity: ['hover', 'active'],
   },
   plugins: [],
 }
