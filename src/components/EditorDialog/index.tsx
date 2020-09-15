@@ -21,8 +21,9 @@ export default function EditorDialog(props: EditorDialogProps) {
   const [watermark, setWatermark] = useState<IWatermark>({
     id: '44m9a8',
     type: 'image',
-    src: 'jisuowei.com',
-    text: '',
+    theme: 'light',
+    src: '',
+    text: 'jisuowei.com',
     position: 'bottom-right',
     scaleType: 'none',
     scalePixel: 200,

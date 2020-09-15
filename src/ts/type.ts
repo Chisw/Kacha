@@ -1,4 +1,5 @@
 export type WatermarkType = 'image' | 'text'
+export type ThemeType = 'dark' | 'light'
 export type FormatType = 'origin' | 'jpeg' | 'png' | 'webp'
 export type SizeChangeType = 'none' | 'pixel' | 'percent'
 export type RepeatType = 'none' | 'x' | 'y' | 'cover'
@@ -16,9 +17,9 @@ export interface IExportSetting {
 export interface IWatermark {
   id: string
   type: WatermarkType
+  theme: ThemeType
   src: string
   text: string
-  font?: string
   position: PositionType
   scaleType: SizeChangeType
   scalePixel: number
@@ -31,5 +32,6 @@ export interface IWatermark {
   repeat: RepeatType
   opacity: number
   rotate: number
+  font?: string
   exportSetting?: IExportSetting
 }

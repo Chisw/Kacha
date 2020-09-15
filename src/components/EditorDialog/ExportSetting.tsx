@@ -27,7 +27,7 @@ export default function ExportSetting(props: ExportSettingProps) {
 
   const scaleInputRef = useRef<any>(null)
 
-  const _setExportSetting = useCallback((key: string, value: any) => {
+  const _set = useCallback((key: string, value: any) => {
     setExportSetting(Object.assign({}, exportSetting, { [key]: value }))
   }, [exportSetting, setExportSetting])
 
@@ -38,7 +38,7 @@ export default function ExportSetting(props: ExportSettingProps) {
           <RadioButtonGroup
             name="format"
             valueSelected={format}
-            onChange={(value: string) => _setExportSetting('format', value)}
+            onChange={(value: string) => _set('format', value)}
           >
             <RadioButton
               id="origin"
@@ -69,7 +69,7 @@ export default function ExportSetting(props: ExportSettingProps) {
               max={100}
               min={0}
               value={quality}
-              onChange={({ value }) => _setExportSetting('quality', value)}
+              onChange={({ value }) => _set('quality', value)}
             />
           </FormGroup>
         </ToggleBox>
@@ -78,7 +78,7 @@ export default function ExportSetting(props: ExportSettingProps) {
           <RadioButtonGroup
             name="export-scale"
             valueSelected={scaleType}
-            onChange={(value: string) => _setExportSetting('scaleType', value)}
+            onChange={(value: string) => _set('scaleType', value)}
           >
             <RadioButton
               id="export-scale-none"
@@ -114,7 +114,7 @@ export default function ExportSetting(props: ExportSettingProps) {
                     const value = Number(get(scaleInputRef, 'current.value'))
                     if (!isNaN(value)) {
                       const key = scaleType === 'pixel' ? 'scalePixel' : 'scalePercent'
-                      _setExportSetting(key, value)
+                      _set(key, value)
                     }
                   }}
                 />
@@ -135,7 +135,7 @@ export default function ExportSetting(props: ExportSettingProps) {
             id="exif"
             labelText="保留原图 EXIF 信息"
             checked={saveEXIF}
-            onChange={(value: boolean) => _setExportSetting('saveEXIF', value)}
+            onChange={(value: boolean) => _set('saveEXIF', value)}
           />
         </FormGroup>
 

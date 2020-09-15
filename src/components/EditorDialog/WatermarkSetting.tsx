@@ -1,9 +1,10 @@
 import React, { useCallback, useRef } from 'react'
 import { IWatermark } from '../../ts/type'
 import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput, Slider } from 'carbon-components-react'
-import { FileUploader} from 'carbon-components-react'
+// import { FileUploader} from 'carbon-components-react'
 import ToggleBox from '../ToggleBox'
 import { get } from 'lodash'
+import Preview from '../Preview'
 
 interface WatermarkSettingProps {
   watermark: IWatermark,
@@ -19,6 +20,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
 
   const {
     type,
+    theme,
     text,
     position,
     scaleType,
@@ -38,7 +40,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
   const offsetXInputRef = useRef<any>(null)
   const offsetYInputRef = useRef<any>(null)
 
-  const _setWatermarkSetting = useCallback((key: string, value: any) => {
+  const _set = useCallback((key: string, value: any) => {
     setWatermark(Object.assign({}, watermark, { [key]: value }))
   }, [watermark, setWatermark])
 
@@ -46,11 +48,12 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     <>
       <div className="mt-4 flex">
         <div className="w-1/2 pr-4">
+
           <FormGroup legendText="水印类型">
             <RadioButtonGroup
               name="type"
               valueSelected={type}
-              onChange={(value: string) => _setWatermarkSetting('type', value)}
+              onChange={(value: string) => _set('type', value)}
             >
               <RadioButton
                 id="image"
@@ -64,15 +67,34 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               />
             </RadioButtonGroup>
           </FormGroup>
+
+          <FormGroup legendText="水印风格">
+            <RadioButtonGroup
+              name="theme"
+              valueSelected={theme}
+              onChange={(value: string) => _set('theme', value)}
+            >
+              <RadioButton
+                id="light"
+                labelText="亮色"
+                value="light"
+              />
+              <RadioButton
+                id="dark"
+                labelText="暗色"
+                value="dark"
+              />
+            </RadioButtonGroup>
+          </FormGroup>
           
           <ToggleBox isOpen={type === 'image'}>
             <FormGroup legendText="图片">
-              <FileUploader
+              {/* <FileUploader
                 buttonLabel="选择图片"
                 labelDescription="仅支持 1M 以下的 .jpg 或 .png"
                 filenameStatus="complete"
                 accept={['.jpeg', '.jpg', '.png']}
-              />
+              /> */}
             </FormGroup>
           </ToggleBox>
 
@@ -83,7 +105,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                 labelText=""
                 placeholder="请输入文本内容"
                 value={text}
-                onChange={(e: any) => _setWatermarkSetting('text', e.target.value)}
+                onChange={(e: any) => _set('text', e.target.value)}
               />
             </FormGroup>
           </ToggleBox>
@@ -91,7 +113,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
           <FormGroup legendText="水印位置">
             <PositionSelector
               selected={position}
-              onSelect={p => _setWatermarkSetting('position', p)}
+              onSelect={p => _set('position', p)}
             />
           </FormGroup>
 
@@ -99,7 +121,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
             <RadioButtonGroup
               name="watermark-offset"
               valueSelected={offsetType}
-              onChange={(value: string) => _setWatermarkSetting('offsetType', value)}
+              onChange={(value: string) => _set('offsetType', value)}
             >
               <RadioButton
                 id="watermark-offset-none"
@@ -135,7 +157,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                       const value = Number(get(offsetXInputRef, 'current.value'))
                       if (!isNaN(value)) {
                         const key = offsetType === 'pixel' ? 'offsetPixelX' : 'offsetPercentX'
-                        _setWatermarkSetting(key, value)
+                        _set(key, value)
                       }
                     }}
                   />
@@ -160,7 +182,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                       const value = Number(get(offsetYInputRef, 'current.value'))
                       if (!isNaN(value)) {
                         const key = offsetType === 'pixel' ? 'offsetPixelY' : 'offsetPercentY'
-                        _setWatermarkSetting(key, value)
+                        _set(key, value)
                       }
                     }}
                   />
@@ -176,7 +198,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
             <RadioButtonGroup
               name="watermark-scale"
               valueSelected={scaleType}
-              onChange={(value: string) => _setWatermarkSetting('scaleType', value)}
+              onChange={(value: string) => _set('scaleType', value)}
             >
               <RadioButton
                 id="watermark-scale-none"
@@ -212,7 +234,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                       const value = Number(get(scaleInputRef, 'current.value'))
                       if (!isNaN(value)) {
                         const key = scaleType === 'pixel' ? 'scalePixel' : 'scalePercent'
-                        _setWatermarkSetting(key, value)
+                        _set(key, value)
                       }
                     }}
                   />
@@ -231,7 +253,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
             <RadioButtonGroup
               name="watermark-repeat"
               valueSelected={repeat}
-              onChange={(value: string) => _setWatermarkSetting('repeat', value)}
+              onChange={(value: string) => _set('repeat', value)}
             >
               <RadioButton
                 id="watermark-repeat-none"
@@ -263,7 +285,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                   min={0}
                   max={100}
                   value={opacity}
-                  onChange={({ value }) => _setWatermarkSetting('opacity', value)}
+                  onChange={({ value }) => _set('opacity', value)}
                 />
               </div>
               <div className="pt-2">
@@ -279,7 +301,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                   min={0}
                   max={360}
                   value={rotate}
-                  onChange={({ value }) => _setWatermarkSetting('rotate', value)}
+                  onChange={({ value }) => _set('rotate', value)}
                 />
               </div>
               <div className="pt-2">
@@ -291,6 +313,9 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
         </div>
         <div className="w-1/2">
           预览
+          <div className="mt-2 w-full h-72">
+            <Preview watermark={watermark} />
+          </div>
         </div>
       </div>
     </>

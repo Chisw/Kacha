@@ -3,6 +3,7 @@
 @import "~tailwindcss/utilities.css";
 
 @import 'carbon-components/scss/globals/scss/styles.scss';
+// @import 'carbon-components/css/carbon-components.css';
 
 * {
   outline: none !important;
@@ -14,8 +15,12 @@ body {
   height: 100%;
 }
 
-.bg-grid {
-  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjMUEyMDJDIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjMUEyMDJDIi8+CjxyZWN0IHg9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiMyRDM3NDgiLz4KPHJlY3QgeT0iMTAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgZmlsbD0iIzJEMzc0OCIvPgo8L3N2Zz4K);
+.bg-grid-dark {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%231A202C' d='M0 0h10v10H0zM10 10h10v10H10z'/%3E%3Cpath fill='%232D3748' d='M10 0h10v10H10zM0 10h10v10H0z'/%3E%3C/svg%3E");
+}
+
+.bg-grid-light {
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23fff' d='M0 0h10v10H0zM10 10h10v10H10z'/%3E%3Cpath fill='%23EDF2F7' d='M10 0h10v10H10zM0 10h10v10H0z'/%3E%3C/svg%3E");
 }
 
 .bg-hazy-10 {

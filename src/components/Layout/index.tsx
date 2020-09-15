@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from './Header'
 import Footer from './Footer'
-import blueprint from '../../images/blueprint.svg'
+import { ReactComponent as blueprint } from '../../images/blueprint.svg'
 
 interface LayoutProps {
   children: React.ReactNode
