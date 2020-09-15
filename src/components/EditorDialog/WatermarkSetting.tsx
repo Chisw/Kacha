@@ -321,7 +321,7 @@ function PositionSelector(props: { selected: string, onSelect: (p: string) => vo
       {Object.entries(positionMap).map(([position, name]) => (
         <div
           key={position}
-          className={`w-1/3 h-12 flex justify-center items-center bg-gray-200  select-none
+          className={`w-1/3 h-12 flex justify-center items-center bg-gray-200
             ${selected === position ? 'text-white bg-gray-900' : 'cursor-pointer hover:bg-gray-400'}
           `}
           onClick={() => onSelect(position)}

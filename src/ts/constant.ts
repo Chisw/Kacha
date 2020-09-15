@@ -4,8 +4,8 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
   {
     id: 'bj93tu',
     type: 'text',
-    src: 'jisuowei.com',
-    text: '',
+    src: '',
+    text: 'Kacha',
     position: 'bottom-right',
     scaleType: 'none',
     scalePixel: 200,
@@ -31,8 +31,8 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
   {
     id: '44m9a8',
     type: 'text',
-    src: 'jisuowei.com',
-    text: '',
+    src: '',
+    text: 'jisuowei.com',
     position: 'bottom-right',
     scaleType: 'none',
     scalePixel: 200,
