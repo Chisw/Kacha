@@ -18,6 +18,8 @@ export default function EditorDialog(props: EditorDialogProps) {
     watermarkId = '',
   } = props
 
+  const [tabIndex, setTabIndex] = useState(0)
+
   const [watermark, setWatermark] = useState<IWatermark>({
     id: '44m9a8',
     type: 'image',
@@ -49,6 +51,14 @@ export default function EditorDialog(props: EditorDialogProps) {
   })
 
   useEffect(() => {
+    if (open) {
+      setTabIndex(0)
+      const wrapper = document.querySelector('.editor-dialog .bx--modal-content')
+      wrapper && wrapper.scrollTo({ top: 0 })
+    }
+  }, [open])
+
+  useEffect(() => {
     const closeButton = document.querySelector('.editor-dialog .bx--modal-close')
     if (closeButton) {
       closeButton.addEventListener('click', onClose)
@@ -66,7 +76,7 @@ export default function EditorDialog(props: EditorDialogProps) {
         onSecondarySubmit={onClose}
       >
         <div>
-          <Tabs>
+          <Tabs selected={tabIndex} onSelectionChange={index => setTabIndex(index)}>
             <Tab label="水印设置">
               <WatermarkSetting
                 watermark={watermark}

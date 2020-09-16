@@ -6606,6 +6606,11 @@ jest@24.9.0:
     import-local "^2.0.0"
     jest-cli "^24.9.0"
 
+jisuowei@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/jisuowei/-/jisuowei-1.0.1.tgz#409ab34f897dc348fdafd79091f0ae5682a6e078"
+  integrity sha512-X+pepZYOZPPWIpsKrrG4WZ7Bf4ssdiXJvxJ/dgyZDnQl4nWspJX9j55z5VYozy4ugohJmwD+IfYdc6j0GT6Lpw==
+
 js-base64@^2.1.8:
   version "2.6.4"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.6.4.tgz#f4e686c5de1ea1f867dbcad3d46d969428df98c4"

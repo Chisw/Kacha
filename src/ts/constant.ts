@@ -34,7 +34,7 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
     type: 'text',
     theme: 'dark',
     src: '',
-    text: 'jisuowei.com',
+    text: '尚在开发中',
     position: 'bottom-right',
     scaleType: 'none',
     scalePixel: 200,
