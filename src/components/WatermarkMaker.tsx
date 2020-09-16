@@ -18,7 +18,7 @@ export default function WatermarkMaker(props: WatermarkMakerProps) {
       <div className="py-4 text-white">
         {activeId}
       </div>
-      <Button small onClick={() => setActiveId('')}>重新选择水印</Button>
+      <Button size="small" onClick={() => setActiveId('')}>重新选择水印</Button>
     </>
   )
 }

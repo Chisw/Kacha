@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal, Tabs, Tab } from 'carbon-components-react'
 import WatermarkSetting from './WatermarkSetting'
 import ExportSetting from './ExportSetting'
@@ -38,6 +38,7 @@ export default function EditorDialog(props: EditorDialogProps) {
     rotate: 0,
     font: '',
   })
+
   const [exportSetting, setExportSetting] = useState<IExportSetting>({
     format: 'origin',
     quality: 92,
@@ -47,14 +48,22 @@ export default function EditorDialog(props: EditorDialogProps) {
     saveEXIF: false,
   })
 
+  useEffect(() => {
+    const closeButton = document.querySelector('.editor-dialog .bx--modal-close')
+    if (closeButton) {
+      closeButton.addEventListener('click', onClose)
+    }
+  }, [onClose])
+
   return (
     <>
       <Modal
         open={open}
+        className="editor-dialog"
         modalHeading={watermarkId ? '编辑' : '创建'}
         primaryButtonText="保存"
         secondaryButtonText="取消"
-        onRequestClose={onClose}
+        onSecondarySubmit={onClose}
       >
         <div>
           <Tabs>

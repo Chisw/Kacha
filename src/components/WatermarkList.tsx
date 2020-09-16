@@ -21,7 +21,6 @@ export default function WatermarkList(props: WatermarkListProps) {
 
   const handleEditorClose = useCallback(() => {
     setEditorOpen(false)
-    setEditId('')
   }, [])
 
   const handleWatermarkEdit = useCallback((watermarkId: string) => {
@@ -82,14 +81,17 @@ export default function WatermarkList(props: WatermarkListProps) {
           <div
             className={`h-40 bg-gray-900 border-2 border-dashed flex justify-center items-center text-white text-6xl cursor-pointer
               opacity-25 hover:opacity-75 transition-all duration-200 bg-hazy-100 active:duration-75 active:opacity-25`}
-            onClick={() => setEditorOpen(true)}
+            onClick={() => {
+              setEditId('')
+              setEditorOpen(true)
+            }}
           >
             <Icons.Plus size={48} />
           </div>
         </div>
         <div className="px-4 w-full pb-2">
-          <Button small>导出水印</Button>
-          <Button small kind="secondary">导入水印</Button>
+          <Button size="small">导出水印</Button>
+          <Button size="small" kind="secondary">导入水印</Button>
         </div>
       </div>
       <EditorDialog
