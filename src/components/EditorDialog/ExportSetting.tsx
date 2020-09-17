@@ -63,7 +63,7 @@ export default function ExportSetting(props: ExportSettingProps) {
           </RadioButtonGroup>
         </FormGroup>
 
-        <ToggleBox isOpen={format === 'jpeg'}>
+        <ToggleBox isOpen={['jpeg', 'webp'].includes(format)}>
           <FormGroup legendText="图像品质">
             <Slider
               max={100}

@@ -49,25 +49,6 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
       <div className="mt-4 flex">
         <div className="w-1/2 pr-4">
 
-          <FormGroup legendText="水印类型">
-            <RadioButtonGroup
-              name="type"
-              valueSelected={type}
-              onChange={(value: string) => _set('type', value)}
-            >
-              <RadioButton
-                id="image"
-                labelText="图片"
-                value="image"
-              />
-              <RadioButton
-                id="text"
-                labelText="文本"
-                value="text"
-              />
-            </RadioButtonGroup>
-          </FormGroup>
-
           <FormGroup legendText="水印风格">
             <RadioButtonGroup
               name="theme"
@@ -83,6 +64,25 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                 id="dark"
                 labelText="暗色"
                 value="dark"
+              />
+            </RadioButtonGroup>
+          </FormGroup>
+
+          <FormGroup legendText="水印类型">
+            <RadioButtonGroup
+              name="type"
+              valueSelected={type}
+              onChange={(value: string) => _set('type', value)}
+            >
+              <RadioButton
+                id="image"
+                labelText="图片"
+                value="image"
+              />
+              <RadioButton
+                id="text"
+                labelText="文本"
+                value="text"
               />
             </RadioButtonGroup>
           </FormGroup>
@@ -312,9 +312,8 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
 
         </div>
         <div className="w-1/2">
-          预览
-          <div className="mt-2 w-full h-72">
-            <Preview watermark={watermark} />
+          <div className="sticky" style={{ top: 48 }}>
+            <Preview resizable watermark={watermark} />
           </div>
         </div>
       </div>

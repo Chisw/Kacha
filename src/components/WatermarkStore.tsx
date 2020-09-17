@@ -1,4 +1,4 @@
-import React form 'react'
+import React, { useState, useEffect } from 'react'
 import { IWatermark } from '../ts/type'
 
 export default function WatermarkStore() {
