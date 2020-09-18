@@ -8,8 +8,6 @@ interface PreviewProps {
   resizable?: boolean
 }
 
-type ISize = 'sm' | 'md' | 'lg'
-
 export default function Preview(props: PreviewProps) {
 
   const {
@@ -43,10 +41,11 @@ export default function Preview(props: PreviewProps) {
     }
 
     ctx!.fillStyle = '#f00'
+    ctx!.textAlign = 'left'
     ctx!.font = '32px monospace'
-    ctx!.fillText(text, 32, 32)
+    ctx!.fillText(text, 0, 32)
 
-    const previewSrc = canvas.toDataURL('image/png', .5)
+    const previewSrc = canvas.toDataURL('image/png')
     return previewSrc
   }, [resizable, selectedIndex, theme, text])
 
