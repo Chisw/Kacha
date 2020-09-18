@@ -1609,6 +1609,11 @@
     "@types/react" "*"
     flatpickr "4.6.1"
 
+"@types/carbon__icons-react@^10.17.0":
+  version "10.17.0"
+  resolved "https://registry.yarnpkg.com/@types/carbon__icons-react/-/carbon__icons-react-10.17.0.tgz#f82dd91ece2e66965c793268d0a7b5c0ea5f5019"
+  integrity sha512-qtA6CH/ST/elk4Ykx8G0s5XxH0Zi+9OqhnXxvjWQgLt2PgpfpDmkVKKDQtEH/p2AXjeI7ci9SM3O4WIh7qNXCA==
+
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"

@@ -256,24 +256,24 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               onChange={(value: string) => _set('repeat', value)}
             >
               <RadioButton
-                id="watermark-repeat-none"
+                id="watermark-repeat-no"
                 labelText="不重复"
-                value="none"
+                value="no-repeat"
               />
               <RadioButton
                 id="watermark-repeat-x"
                 labelText="横向"
-                value="x"
+                value="repeat-x"
               />
               <RadioButton
                 id="watermark-repeat-y"
                 labelText="纵向"
-                value="y"
+                value="repeat-y"
               />
               <RadioButton
-                id="watermark-repeat-cover"
+                id="watermark-repeat-repeat"
                 labelText="覆盖"
-                value="cover"
+                value="repeat"
               />
             </RadioButtonGroup>
           </FormGroup>

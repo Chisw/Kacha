@@ -10,7 +10,7 @@ export default function App() {
 
   return (
     <Layout>
-      <div className="container mx-auto mt-12 flex-grow">
+      <div className="container mx-auto mt-10 flex-grow">
         {activeId ? (
           <WatermarkMaker
             activeId={activeId}

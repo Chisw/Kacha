@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from 'carbon-components-react'
+import { Reset16 } from '@carbon/icons-react'
 
 interface WatermarkMakerProps {
   activeId: string
@@ -15,10 +16,10 @@ export default function WatermarkMaker(props: WatermarkMakerProps) {
 
   return (
     <>
+      <Button size="small" renderIcon={Reset16} onClick={() => setActiveId('')}>重选</Button>
       <div className="py-4 text-white">
         {activeId}
       </div>
-      <Button size="small" onClick={() => setActiveId('')}>重新选择水印</Button>
     </>
   )
 }

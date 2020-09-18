@@ -2,7 +2,7 @@ export type WatermarkType = 'image' | 'text'
 export type ThemeType = 'dark' | 'light'
 export type FormatType = 'origin' | 'jpeg' | 'png' | 'webp'
 export type SizeChangeType = 'none' | 'pixel' | 'percent'
-export type RepeatType = 'none' | 'x' | 'y' | 'cover'
+export type RepeatType = 'no-repeat' | 'repeat-x' | 'repeat-y' | 'repeat'
 export type PositionType = 'top-left' | 'top' | 'top-right' | 'left' | 'center' | 'right' | 'bottom-left' | 'bottom' | 'bottom-right'
 
 export interface IExportSetting {

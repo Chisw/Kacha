@@ -35,7 +35,7 @@ export default function EditorDialog(props: EditorDialogProps) {
     offsetPixelY: 20,
     offsetPercentX: 5,
     offsetPercentY: 5,
-    repeat: 'none',
+    repeat: 'no-repeat',
     opacity: 100,
     rotate: 0,
     font: '',

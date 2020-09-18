@@ -4,6 +4,7 @@ import { DEFAULT_WATERMARK_LIST } from '../ts/constant'
 import { Button } from 'carbon-components-react'
 import EditorDialog from './EditorDialog'
 import Preview from './Preview'
+import { Export16, Download16, Store16 } from '@carbon/icons-react'
 
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-100 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -30,7 +31,27 @@ export default function WatermarkList(props: WatermarkListProps) {
 
   return (
     <>
+      <div className="button-list pb-8">
+        <Button size="small" renderIcon={Store16}>水印屋</Button>
+        <Button size="small" renderIcon={Download16} kind="secondary">导出水印</Button>
+        <Button size="small" renderIcon={Export16} kind="secondary">导入水印</Button>
+      </div>
+
       <div className="flex flex-wrap -mx-4">
+
+        <div className="mb-8 px-4 w-1/2 md:w-1/3 lg:w-1/5">
+          <div
+            className={`h-40 bg-gray-900 border-2 border-dashed flex justify-center items-center text-white text-6xl cursor-pointer
+              opacity-25 hover:opacity-75 transition-all duration-200 bg-hazy-100 active:duration-75 active:opacity-25`}
+            onClick={() => {
+              setEditId('')
+              setEditorOpen(true)
+            }}
+          >
+            <Icons.Plus size={48} />
+          </div>
+        </div>
+        
         {DEFAULT_WATERMARK_LIST.map(watermark => {
           const { id } = watermark
           return (
@@ -77,28 +98,23 @@ export default function WatermarkList(props: WatermarkListProps) {
             </div>
           )
         })}
-        <div className="mb-8 px-4 w-1/2 md:w-1/3 lg:w-1/5">
-          <div
-            className={`h-40 bg-gray-900 border-2 border-dashed flex justify-center items-center text-white text-6xl cursor-pointer
-              opacity-25 hover:opacity-75 transition-all duration-200 bg-hazy-100 active:duration-75 active:opacity-25`}
-            onClick={() => {
-              setEditId('')
-              setEditorOpen(true)
-            }}
-          >
-            <Icons.Plus size={48} />
-          </div>
-        </div>
-        <div className="px-4 w-full pb-2">
-          <Button size="small">导出水印</Button>
-          <Button size="small" kind="secondary">导入水印</Button>
-        </div>
+
       </div>
+
       <EditorDialog
         open={editorOpen}
         watermarkId={editId}
         onClose={handleEditorClose}
       />
+
+      <style>
+        {`
+          .button-list button + button {
+            margin-left: .5rem;
+          }
+        `}
+      </style>
+      
     </>
   )
 }
