@@ -1,6 +1,17 @@
 import { IWatermark } from './type'
 
-export const getPatternDataURL = (watermark: IWatermark) => {
+
+export const getImageBySrc: (src: string) => Promise<CanvasImageSource> = async (src) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    // img.setAttribute('crossOrigin', 'Anonymous')
+    img.src = src
+    img.onload = () => resolve(img)
+    img.onerror = () => reject()
+  })
+}
+
+export const getImageByWatermark: (w: IWatermark) => Promise<CanvasImageSource> = async (watermark) => {
   const {
     text,
     opacity,
@@ -13,7 +24,7 @@ export const getPatternDataURL = (watermark: IWatermark) => {
   canvas.height = 32
   const center = {
     x: 50,
-    y: 16
+    y: 16,
   }
   ctx!.globalAlpha = opacity / 100
   ctx!.translate(center.x, center.y)
@@ -24,5 +35,7 @@ export const getPatternDataURL = (watermark: IWatermark) => {
   ctx!.fillStyle = '32px monospace'
   ctx!.fillText(text, 0, 32)
 
-  return canvas.toDataURL('image/png')
+  const dataURL = canvas.toDataURL('image/png')
+
+  return getImageBySrc(dataURL)
 }

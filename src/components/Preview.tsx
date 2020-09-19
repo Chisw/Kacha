@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import { IWatermark } from '../ts/type'
 import { FormGroup, ContentSwitcher, Switch } from 'carbon-components-react'
 import { BG_GRID_DATA_DARK, BG_GRID_DATA_LIGHT } from '../ts/constant'
-import { getPatternDataURL } from '../ts/utils'
+import { getImageByWatermark, getImageBySrc } from '../ts/utils'
+import { useAsync } from 'react-use'
 
 interface PreviewProps {
   watermark: IWatermark
@@ -22,7 +23,7 @@ export default function Preview(props: PreviewProps) {
 
   const [selectedIndex, setSelectedIndex] = useState(0)
 
-  const previewSrc = useMemo(() => {
+  const previewState = useAsync(async () => {
     const canvas: HTMLCanvasElement = document.createElement('canvas')
 
     const width = resizable ? [480, 1080, 1920][selectedIndex] : 400
@@ -34,20 +35,16 @@ export default function Preview(props: PreviewProps) {
     const ctx = canvas.getContext('2d')
 
     if (resizable) {
-      const img = new Image()
-      img.src = watermark.theme === 'dark' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK
+      const img = await getImageBySrc(watermark.theme === 'dark' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK)
       ctx!.fillStyle = ctx!.createPattern(img, 'repeat') as CanvasPattern
       ctx!.fillRect(0, 0, width, height)
     }
 
-    const pattern = getPatternDataURL(watermark)
-    const img = new Image()
-    img.src = pattern
+    const img = await getImageByWatermark(watermark)
     ctx!.fillStyle = ctx!.createPattern(img, watermark.repeat) as CanvasPattern
     ctx!.fillRect(0, 0, width, height)
 
-    const previewSrc = canvas.toDataURL('image/png')
-    return previewSrc
+    return canvas.toDataURL('image/png')
   }, [resizable, selectedIndex, watermark])
 
   if (resizable) {
@@ -55,12 +52,15 @@ export default function Preview(props: PreviewProps) {
       <>
         <FormGroup legendText="效果预览">
           <div className="shadow-lg">
-            <div className="w-full">
+            <div className="relative w-full flex justify-center bg-black">
               <img
                 alt="preview"
                 className="max-w-full max-h-full"
-                src={previewSrc}
+                src={previewState.value}
               />
+              <div className="absolute top-0 left-0 px-2 py-1 bg-black-800 text-xs">
+                {previewState.loading && <span className="text-white">loading..</span>}
+              </div>
             </div>
             <ContentSwitcher selectedIndex={selectedIndex} onChange={() => { }}>
               <Switch text="480x320px" onClick={() => setSelectedIndex(0)} onKeyDown={() => { }} />
@@ -88,7 +88,7 @@ export default function Preview(props: PreviewProps) {
       <img
         alt="preview"
         className="max-w-full max-h-full"
-        src={previewSrc}
+        src={previewState.value}
       />
     </div>
   )

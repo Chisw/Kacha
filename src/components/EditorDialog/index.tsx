@@ -69,6 +69,7 @@ export default function EditorDialog(props: EditorDialogProps) {
     <>
       <Modal
         open={open}
+        size="lg"
         className="editor-dialog"
         modalHeading={watermarkId ? '编辑' : '创建'}
         primaryButtonText="保存"
