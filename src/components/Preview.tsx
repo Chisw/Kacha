@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { IWatermark } from '../ts/type'
 import { FormGroup, ContentSwitcher, Switch } from 'carbon-components-react'
 import { BG_GRID_DATA_DARK, BG_GRID_DATA_LIGHT } from '../ts/constant'
+import { getPatternDataURL } from '../ts/utils'
 
 interface PreviewProps {
   watermark: IWatermark
@@ -17,7 +18,6 @@ export default function Preview(props: PreviewProps) {
 
   const {
     theme,
-    text,
   } = watermark
 
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -35,19 +35,20 @@ export default function Preview(props: PreviewProps) {
 
     if (resizable) {
       const img = new Image()
-      img.src = theme === 'dark' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK
+      img.src = watermark.theme === 'dark' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK
       ctx!.fillStyle = ctx!.createPattern(img, 'repeat') as CanvasPattern
       ctx!.fillRect(0, 0, width, height)
     }
 
-    ctx!.fillStyle = '#f00'
-    ctx!.textAlign = 'left'
-    ctx!.font = '32px monospace'
-    ctx!.fillText(text, 0, 32)
+    const pattern = getPatternDataURL(watermark)
+    const img = new Image()
+    img.src = pattern
+    ctx!.fillStyle = ctx!.createPattern(img, watermark.repeat) as CanvasPattern
+    ctx!.fillRect(0, 0, width, height)
 
     const previewSrc = canvas.toDataURL('image/png')
     return previewSrc
-  }, [resizable, selectedIndex, theme, text])
+  }, [resizable, selectedIndex, watermark])
 
   if (resizable) {
     return (
