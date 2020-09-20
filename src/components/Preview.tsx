@@ -58,9 +58,11 @@ export default function Preview(props: PreviewProps) {
                 className="max-w-full max-h-full"
                 src={previewState.value}
               />
-              <div className="absolute top-0 left-0 px-2 py-1 bg-black-800 text-xs">
-                {previewState.loading && <span className="text-white">loading..</span>}
-              </div>
+              {previewState.loading && (
+                <div className="absolute top-0 left-0 px-2 py-1 bg-black-800 text-xs">
+                  <span className="text-white">loading..</span>
+                </div>
+              )}
             </div>
             <ContentSwitcher selectedIndex={selectedIndex} onChange={() => { }}>
               <Switch text="480x320px" onClick={() => setSelectedIndex(0)} onKeyDown={() => { }} />
