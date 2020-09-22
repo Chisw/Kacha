@@ -19,9 +19,9 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
     offsetPixelY: 20,
     offsetPercentX: 5,
     offsetPercentY: 5,
-    repeat: 'no-repeat',
-    opacity: 1,
-    rotate: 0,
+    repeat: 'repeat',
+    opacity: 100,
+    rotate: 15,
     font: '',
     exportSetting: {
       format: 'jpeg',
@@ -48,8 +48,8 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
     offsetPercentX: 5,
     offsetPercentY: 5,
     repeat: 'no-repeat',
-    opacity: 1,
-    rotate: 0,
+    opacity: 100,
+    rotate: 25,
     font: '',
     exportSetting: {
       format: 'jpeg',

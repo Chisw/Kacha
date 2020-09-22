@@ -26,8 +26,8 @@ export default function Preview(props: PreviewProps) {
   const previewState = useAsync(async () => {
     const canvas: HTMLCanvasElement = document.createElement('canvas')
 
-    const width = resizable ? [480, 1080, 1920][selectedIndex] : 400
-    const height = resizable ? [320, 720, 1280][selectedIndex] : 200
+    const width = resizable ? [480, 1080, 1920][selectedIndex] : 200
+    const height = resizable ? [320, 720, 1280][selectedIndex] : 100
 
     canvas.width = width
     canvas.height = height
