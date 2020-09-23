@@ -3,11 +3,12 @@ import { Modal, Tabs, Tab } from 'carbon-components-react'
 import WatermarkSetting from './WatermarkSetting'
 import ExportSetting from './ExportSetting'
 import { IWatermark, IExportSetting } from '../../ts/type'
+import { EMPTY_WATERMARK } from '../../ts/constant'
 
 interface EditorDialogProps {
   open: boolean
   onClose: () => void
-  watermarkId?: string
+  watermark?: IWatermark
 }
 
 export default function EditorDialog(props: EditorDialogProps) {
@@ -15,40 +16,14 @@ export default function EditorDialog(props: EditorDialogProps) {
   const {
     open,
     onClose,
-    watermarkId = '',
+    watermark = EMPTY_WATERMARK,
   } = props
 
   const [tabIndex, setTabIndex] = useState(0)
+  const [watermarkCache, setWatermarkCache] = useState<IWatermark>(Object.assign({}, watermark))
+  const [exportSetting, setExportSetting] = useState<IExportSetting>(Object.assign({}, watermark.exportSetting))
 
-  const [watermark, setWatermark] = useState<IWatermark>({
-    id: '44m9a8',
-    type: 'image',
-    theme: 'light',
-    src: '',
-    text: 'jisuowei.com',
-    position: 'bottom-right',
-    scaleType: 'none',
-    scalePixel: 200,
-    scalePercent: 20,
-    offsetType: 'none',
-    offsetPixelX: 20,
-    offsetPixelY: 20,
-    offsetPercentX: 5,
-    offsetPercentY: 5,
-    repeat: 'repeat',
-    opacity: 100,
-    rotate: 0,
-    font: '',
-  })
-
-  const [exportSetting, setExportSetting] = useState<IExportSetting>({
-    format: 'origin',
-    quality: 92,
-    scaleType: 'none',
-    scalePixel: 1080,
-    scalePercent: 80,
-    saveEXIF: false,
-  })
+  console.log('watermark', watermark, watermarkCache)
 
   useEffect(() => {
     if (open) {
@@ -71,7 +46,7 @@ export default function EditorDialog(props: EditorDialogProps) {
         open={open}
         size="lg"
         className="editor-dialog"
-        modalHeading={watermarkId ? '编辑' : '创建'}
+        modalHeading={watermarkCache.id ? '编辑' : '创建'}
         primaryButtonText="保存"
         secondaryButtonText="取消"
         onSecondarySubmit={onClose}
@@ -80,8 +55,8 @@ export default function EditorDialog(props: EditorDialogProps) {
           <Tabs selected={tabIndex} onSelectionChange={index => setTabIndex(index)}>
             <Tab label="水印设置">
               <WatermarkSetting
-                watermark={watermark}
-                setWatermark={setWatermark}
+                watermark={watermarkCache}
+                setWatermark={setWatermarkCache}
               />
             </Tab>
             <Tab label="导出设置">

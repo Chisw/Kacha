@@ -1,10 +1,13 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import Icons from '../images/icons'
 import { DEFAULT_WATERMARK_LIST } from '../ts/constant'
 import { Button } from 'carbon-components-react'
 import EditorDialog from './EditorDialog'
 import Preview from './Preview'
 import { Export16, Download16, Store16, Add16 } from '@carbon/icons-react'
+import localforage from 'localforage'
+import { useAsync } from 'react-use'
+import { IWatermark } from '../ts/type'
 
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-100 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -17,20 +20,37 @@ export default function WatermarkList(props: WatermarkListProps) {
     setActiveId,
   } = props
 
-  const [editId, setEditId] = useState('')
+  const [initialized, setInitialized] = useState(false)
+  const [watermarkList, setWatermarkList] = useState<IWatermark[]>([])
+  const [editWatermark, setEditWatermark] = useState<IWatermark | undefined>(undefined)
   const [editorOpen, setEditorOpen] = useState(false)
+
+  useAsync(async () => {
+    const list = await localforage.getItem('kacha-list')
+    if (list) {
+      setWatermarkList(list as IWatermark[])
+      setInitialized(true)
+    } else {
+      setWatermarkList(DEFAULT_WATERMARK_LIST)
+      setInitialized(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    // console.log(watermarkList)
+  }, [initialized, watermarkList])
 
   const handleEditorClose = useCallback(() => {
     setEditorOpen(false)
   }, [])
 
-  const handleWatermarkEdit = useCallback((watermarkId: string) => {
-    setEditId(watermarkId)
+  const handleWatermarkEdit = useCallback((watermark: IWatermark) => {
     setEditorOpen(true)
+    setEditWatermark(watermark)
   }, [])
 
   const handleAdd = useCallback(() => {
-    setEditId('')
+    setEditWatermark(undefined)
     setEditorOpen(true)
   }, [])
 
@@ -45,7 +65,7 @@ export default function WatermarkList(props: WatermarkListProps) {
 
       <div className="flex flex-wrap -mx-4">
         
-        {DEFAULT_WATERMARK_LIST.map(watermark => {
+        {watermarkList.map(watermark => {
           const { id } = watermark
           return (
             <div
@@ -69,7 +89,7 @@ export default function WatermarkList(props: WatermarkListProps) {
                   <div className="flex justify-between items-center text-xs">
                     <div
                       className={`py-2 flex-grow ${HOVER_CLASS} text-white border-r border-solid border-gray-800`}
-                      onClick={() => handleWatermarkEdit(id)}
+                      onClick={() => handleWatermarkEdit(watermark)}
                     >
                       <Icons.Edit />
                     </div>
@@ -106,7 +126,7 @@ export default function WatermarkList(props: WatermarkListProps) {
 
       <EditorDialog
         open={editorOpen}
-        watermarkId={editId}
+        watermark={editWatermark}
         onClose={handleEditorClose}
       />
 
