@@ -20,10 +20,15 @@ export default function EditorDialog(props: EditorDialogProps) {
   } = props
 
   const [tabIndex, setTabIndex] = useState(0)
-  const [watermarkCache, setWatermarkCache] = useState<IWatermark>(Object.assign({}, watermark))
-  const [exportSetting, setExportSetting] = useState<IExportSetting>(Object.assign({}, watermark.exportSetting))
-
-  console.log('watermark', watermark, watermarkCache)
+  const [watermarkCache, setWatermarkCache] = useState<IWatermark>()
+  const [exportSetting, setExportSetting] = useState<IExportSetting>()
+  
+  useEffect(() => {
+    if (watermark) {
+      setWatermarkCache(Object.assign({}, watermark))
+      setExportSetting(Object.assign({}, watermark.exportSetting))
+    }
+  }, [watermark])
 
   useEffect(() => {
     if (open) {
