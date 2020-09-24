@@ -39,3 +39,8 @@ export const getImageByWatermark: (w: IWatermark) => Promise<CanvasImageSource> 
 
   return getImageBySrc(dataURL)
 }
+
+export const getShortId = (n?: number) => Array
+  .from('*'.repeat(n || 6))
+  .map(() => Math.random().toString(36)[2])
+  .join('')

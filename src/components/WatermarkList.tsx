@@ -31,6 +31,7 @@ export default function WatermarkList(props: WatermarkListProps) {
       setWatermarkList(list as IWatermark[])
       setInitialized(true)
     } else {
+      await localforage.setItem('kacha-list', DEFAULT_WATERMARK_LIST)
       setWatermarkList(DEFAULT_WATERMARK_LIST)
       setInitialized(true)
     }

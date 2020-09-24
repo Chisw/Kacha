@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Modal, Tabs, Tab } from 'carbon-components-react'
 import WatermarkSetting from './WatermarkSetting'
 import ExportSetting from './ExportSetting'
-import { IWatermark, IExportSetting } from '../../ts/type'
+import { IWatermark } from '../../ts/type'
 import { EMPTY_WATERMARK } from '../../ts/constant'
+import { getShortId } from '../../ts/utils'
 
 interface EditorDialogProps {
   open: boolean
@@ -21,12 +22,11 @@ export default function EditorDialog(props: EditorDialogProps) {
 
   const [tabIndex, setTabIndex] = useState(0)
   const [watermarkCache, setWatermarkCache] = useState<IWatermark>()
-  const [exportSetting, setExportSetting] = useState<IExportSetting>()
+  const [submitting, setSubmitting] = useState(false)
   
   useEffect(() => {
     if (watermark) {
       setWatermarkCache(Object.assign({}, watermark))
-      setExportSetting(Object.assign({}, watermark.exportSetting))
     }
   }, [watermark])
 
@@ -39,11 +39,27 @@ export default function EditorDialog(props: EditorDialogProps) {
   }, [open])
 
   useEffect(() => {
-    const closeButton = document.querySelector('.editor-dialog .bx--modal-close')
-    if (closeButton) {
-      closeButton.addEventListener('click', onClose)
+    if (open) {
+      const closeButton = document.querySelector('.editor-dialog .bx--modal-close')
+      if (closeButton) {
+        closeButton.addEventListener('click', onClose)
+      }
     }
-  }, [onClose])
+  }, [open, onClose])
+
+  const handleSubmit = useCallback(() => {
+    if (submitting) return
+    setSubmitting(true)
+    const id = watermarkCache!.id
+    if (id) {
+      console.log(watermarkCache)
+    } else {
+      console.log(getShortId())
+    }
+    setSubmitting(false)
+  }, [watermarkCache, submitting])
+
+  if (!watermarkCache) return <></>
 
   return (
     <>
@@ -55,6 +71,7 @@ export default function EditorDialog(props: EditorDialogProps) {
         primaryButtonText="保存"
         secondaryButtonText="取消"
         onSecondarySubmit={onClose}
+        onRequestSubmit={handleSubmit}
       >
         <div>
           <Tabs selected={tabIndex} onSelectionChange={index => setTabIndex(index)}>
@@ -66,8 +83,8 @@ export default function EditorDialog(props: EditorDialogProps) {
             </Tab>
             <Tab label="导出设置">
               <ExportSetting
-                exportSetting={exportSetting}
-                setExportSetting={setExportSetting}
+                watermark={watermarkCache}
+                setWatermark={setWatermarkCache}
               />
             </Tab>
           </Tabs>

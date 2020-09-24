@@ -1,19 +1,19 @@
 import React, { useRef, useCallback } from 'react'
-import { IExportSetting } from '../../ts/type'
+import { IWatermark } from '../../ts/type'
 import { FormGroup, RadioButtonGroup, RadioButton, Slider, NumberInput, Checkbox } from 'carbon-components-react'
 import ToggleBox from '../ToggleBox'
 import { get } from 'lodash'
 
 interface ExportSettingProps {
-  exportSetting: IExportSetting
-  setExportSetting: (setting: IExportSetting) => void
+  watermark: IWatermark,
+  setWatermark: (watermark: IWatermark) => void
 }
 
 export default function ExportSetting(props: ExportSettingProps) {
 
   const {
-    exportSetting,
-    setExportSetting,
+    watermark,
+    setWatermark,
   } = props
 
   const {
@@ -23,13 +23,13 @@ export default function ExportSetting(props: ExportSettingProps) {
     scalePixel,
     scalePercent,
     saveEXIF,
-  } = exportSetting
+  } = watermark.exportSetting!
 
   const scaleInputRef = useRef<any>(null)
 
   const _set = useCallback((key: string, value: any) => {
-    setExportSetting(Object.assign({}, exportSetting, { [key]: value }))
-  }, [exportSetting, setExportSetting])
+    setWatermark(Object.assign({}, watermark, { exportSetting: Object.assign({}, watermark.exportSetting, { [key]: value }) }))
+  }, [watermark, setWatermark])
 
   return (
     <>

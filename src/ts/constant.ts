@@ -24,7 +24,7 @@ export const EMPTY_WATERMARK: IWatermark = {
   font: '',
   exportSetting: {
     format: 'jpeg',
-    quality: .92,
+    quality: 92,
     scaleType: 'none',
     scalePixel: 1080,
     scalePercent: 80,
@@ -54,7 +54,7 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
     font: '',
     exportSetting: {
       format: 'jpeg',
-      quality: .92,
+      quality: 92,
       scaleType: 'none',
       scalePixel: 1080,
       scalePercent: 80,
@@ -66,7 +66,7 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
     type: 'text',
     theme: 'dark',
     src: '',
-    text: '尚在开发中',
+    text: '尚在开发中2',
     position: 'bottom-right',
     scaleType: 'none',
     scalePixel: 200,
@@ -82,7 +82,7 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
     font: '',
     exportSetting: {
       format: 'jpeg',
-      quality: .92,
+      quality: 92,
       scaleType: 'none',
       scalePixel: 1080,
       scalePercent: 80,
