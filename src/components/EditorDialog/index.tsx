@@ -1,23 +1,26 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Modal, Tabs, Tab } from 'carbon-components-react'
+import { Modal, Tabs, Tab, Loading } from 'carbon-components-react'
 import WatermarkSetting from './WatermarkSetting'
 import ExportSetting from './ExportSetting'
 import { IWatermark } from '../../ts/type'
 import { EMPTY_WATERMARK } from '../../ts/constant'
 import { getShortId } from '../../ts/utils'
+import Local from '../../ts/local'
 
 interface EditorDialogProps {
   open: boolean
-  onClose: () => void
   watermark?: IWatermark
+  setWatermarkList: (list: IWatermark[]) => void
+  onClose: () => void
 }
 
 export default function EditorDialog(props: EditorDialogProps) {
 
   const {
     open,
-    onClose,
     watermark = EMPTY_WATERMARK,
+    setWatermarkList,
+    onClose,
   } = props
 
   const [tabIndex, setTabIndex] = useState(0)
@@ -47,17 +50,24 @@ export default function EditorDialog(props: EditorDialogProps) {
     }
   }, [open, onClose])
 
-  const handleSubmit = useCallback(() => {
-    if (submitting) return
+  const handleSubmit = useCallback(async () => {
     setSubmitting(true)
     const id = watermarkCache!.id
-    if (id) {
-      console.log(watermarkCache)
-    } else {
+    if (id) {  // update
+      const list = await Local.getList()
+      if (list) {
+        const index = list.findIndex(({ id: _id }, index) => id === _id)
+        if (index > -1) list.splice(index, 1)
+        list.unshift(watermarkCache!)
+        await Local.setList(list)
+        setWatermarkList(list)
+        onClose()
+      }
+    } else {  // create
       console.log(getShortId())
     }
     setSubmitting(false)
-  }, [watermarkCache, submitting])
+  }, [watermarkCache, onClose, setWatermarkList])
 
   if (!watermarkCache) return <></>
 
@@ -89,6 +99,11 @@ export default function EditorDialog(props: EditorDialogProps) {
             </Tab>
           </Tabs>
         </div>
+        {submitting && (
+          <div className="absolute inset-0 z-20 bg-white-600 bg-hazy-25 flex justify-center items-center">
+            <Loading description="保存中" withOverlay={false} />
+          </div>
+        )}
       </Modal>
       <style>
         {`

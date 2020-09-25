@@ -5,9 +5,9 @@ import { Button } from 'carbon-components-react'
 import EditorDialog from './EditorDialog'
 import Preview from './Preview'
 import { Export16, Download16, Store16, Add16 } from '@carbon/icons-react'
-import localforage from 'localforage'
 import { useAsync } from 'react-use'
 import { IWatermark } from '../ts/type'
+import Local from '../ts/local'
 
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-100 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -26,12 +26,12 @@ export default function WatermarkList(props: WatermarkListProps) {
   const [editorOpen, setEditorOpen] = useState(false)
 
   useAsync(async () => {
-    const list = await localforage.getItem('kacha-list')
+    const list = await Local.getList()
     if (list) {
       setWatermarkList(list as IWatermark[])
       setInitialized(true)
     } else {
-      await localforage.setItem('kacha-list', DEFAULT_WATERMARK_LIST)
+      await Local.setList(DEFAULT_WATERMARK_LIST)
       setWatermarkList(DEFAULT_WATERMARK_LIST)
       setInitialized(true)
     }
@@ -128,6 +128,7 @@ export default function WatermarkList(props: WatermarkListProps) {
       <EditorDialog
         open={editorOpen}
         watermark={editWatermark}
+        setWatermarkList={setWatermarkList}
         onClose={handleEditorClose}
       />
 
