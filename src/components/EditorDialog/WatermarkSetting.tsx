@@ -19,6 +19,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
   } = props
 
   const {
+    title,
     type,
     theme,
     text,
@@ -66,6 +67,16 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                 value="dark"
               />
             </RadioButtonGroup>
+          </FormGroup>
+
+          <FormGroup legendText="标题">
+            <TextInput
+              id="title"
+              labelText=""
+              placeholder="请输入标题"
+              value={title}
+              onChange={(e: any) => _set('title', e.target.value)}
+            />
           </FormGroup>
 
           <FormGroup legendText="水印类型">

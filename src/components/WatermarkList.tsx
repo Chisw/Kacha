@@ -78,11 +78,11 @@ export default function WatermarkList(props: WatermarkListProps) {
       <div className="flex flex-wrap -mx-4">
         
         {watermarkList.map(watermark => {
-          const { id } = watermark
+          const { id, title } = watermark
           return (
             <div
               key={id}
-              className="mb-4 px-4 w-1/2 md:w-1/3 lg:w-1/5"
+              className="mb-6 px-4 w-1/2 md:w-1/3 lg:w-1/5"
             >
               <div className="watermark-wrapper relative h-40 overflow-hidden shadow-lg">
                 <div className="absolute inset-0">
@@ -120,6 +120,7 @@ export default function WatermarkList(props: WatermarkListProps) {
                   </div>
                 </div>
               </div>
+              <div className="mt-2 text-white text-sm truncate text-gray-300">{title || <span className="text-gray-600">[未命名]</span>}</div>
             </div>
           )
         })}

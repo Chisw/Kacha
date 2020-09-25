@@ -16,6 +16,7 @@ export interface IExportSetting {
 
 export interface IWatermark {
   id: string
+  title: string
   type: WatermarkType
   theme: ThemeType
   src: string
