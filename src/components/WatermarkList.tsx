@@ -1,13 +1,14 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useState } from 'react'
 import Icons from '../images/icons'
-import { DEFAULT_WATERMARK_LIST } from '../ts/constant'
-import { Button } from 'carbon-components-react'
+import { DEFAULT_WATERMARK_LIST, PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM, EMPTY_WATERMARK } from '../ts/constant'
+import { Button, Loading, Modal } from 'carbon-components-react'
 import EditorDialog from './EditorDialog'
 import Preview from './Preview'
 import { Export16, Download16, Store16, Add16 } from '@carbon/icons-react'
 import { useAsync } from 'react-use'
 import { IWatermark } from '../ts/type'
 import Local from '../ts/local'
+import { getShortId } from '../ts/utils'
 
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-100 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -20,43 +21,53 @@ export default function WatermarkList(props: WatermarkListProps) {
     setActiveId,
   } = props
 
-  const [initialized, setInitialized] = useState(false)
+  const [loaded, setLoaded] = useState(false)
   const [watermarkList, setWatermarkList] = useState<IWatermark[]>([])
-  const [editWatermark, setEditWatermark] = useState<IWatermark | undefined>(undefined)
+  const [operateWatermark, setOperateWatermark] = useState<IWatermark>(EMPTY_WATERMARK)
   const [editorOpen, setEditorOpen] = useState(false)
+  const [copyOpen, setCopyOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
 
   useAsync(async () => {
     const list = await Local.getList()
     if (list) {
       setWatermarkList(list as IWatermark[])
-      setInitialized(true)
+      setLoaded(true)
     } else {
       await Local.setList(DEFAULT_WATERMARK_LIST)
       setWatermarkList(DEFAULT_WATERMARK_LIST)
-      setInitialized(true)
+      setLoaded(true)
     }
   }, [])
 
-  useEffect(() => {
-    // console.log(watermarkList)
-  }, [initialized, watermarkList])
+  const handleAdd = useCallback(() => {
+    setOperateWatermark(EMPTY_WATERMARK)
+    setEditorOpen(true)
+  }, [])
+
+  const handleWatermarkEdit = useCallback((watermark: IWatermark) => {
+    setOperateWatermark(watermark)
+    setEditorOpen(true)
+  }, [])
 
   const handleEditorClose = useCallback(() => {
     setEditorOpen(false)
   }, [])
 
-  const handleWatermarkEdit = useCallback((watermark: IWatermark) => {
-    setEditorOpen(true)
-    setEditWatermark(watermark)
+  const handleWatermarkCopy = useCallback((watermark: IWatermark) => {
+    setOperateWatermark(watermark)
+    setCopyOpen(true)
   }, [])
 
-  const handleAdd = useCallback(() => {
-    setEditWatermark(undefined)
-    setEditorOpen(true)
+  const handleWatermarkDelete = useCallback((watermark: IWatermark) => {
+    setOperateWatermark(watermark)
+    setDeleteOpen(true)
   }, [])
 
   return (
     <>
+      {!loaded && <Loading />}
+
       <div className="button-list pb-8">
         <Button size="small" renderIcon={Store16}>水印屋</Button>
         <Button size="small" renderIcon={Add16} kind="secondary" onClick={handleAdd}>创建水印</Button>
@@ -96,13 +107,13 @@ export default function WatermarkList(props: WatermarkListProps) {
                     </div>
                     <div
                       className={`py-2 flex-grow ${HOVER_CLASS} text-white border-r border-solid border-gray-800`}
-                      onClick={() => {}}
+                      onClick={() => handleWatermarkCopy(watermark)}
                     >
                       <Icons.Duplicate />
                     </div>
                     <div
                       className={`py-2 flex-grow ${HOVER_CLASS} text-red-600`}
-                      onClick={() => {}}
+                      onClick={() => handleWatermarkDelete(watermark)}
                     >
                       <Icons.Delete />
                     </div>
@@ -127,10 +138,57 @@ export default function WatermarkList(props: WatermarkListProps) {
 
       <EditorDialog
         open={editorOpen}
-        watermark={editWatermark}
+        watermark={operateWatermark}
         setWatermarkList={setWatermarkList}
         onClose={handleEditorClose}
       />
+
+      <Modal
+        open={copyOpen}
+        className="copy-dialog"
+        size="sm"
+        modalHeading="复制该水印"
+        primaryButtonText="确定"
+        secondaryButtonText="取消"
+        onRequestClose={() => setCopyOpen(false)}
+        onRequestSubmit={async () => {
+          const newWatermark = Object.assign({}, operateWatermark, { id: getShortId() })
+          const list = await Local.updateList(newWatermark)
+          setWatermarkList(list)
+          setCopyOpen(false)
+        }}
+      >
+        <div className="px-4 py-6">
+          <div className="shadow-lg" style={{ width: PREVIEW_WIDTH_SM, height: PREVIEW_HEIGHT_SM }}>
+            {operateWatermark && (
+              <Preview watermark={operateWatermark} />
+            )}
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={deleteOpen}
+        className="delete-dialog"
+        size="sm"
+        modalHeading="删除该水印"
+        primaryButtonText="确定"
+        secondaryButtonText="取消"
+        onRequestClose={() => setDeleteOpen(false)}
+        onRequestSubmit={async () => {
+          const list = await Local.updateList(undefined, operateWatermark.id)
+          setWatermarkList(list)
+          setDeleteOpen(false)
+        }}
+      >
+        <div className="px-4 py-6">
+          <div className="shadow-lg" style={{ width: PREVIEW_WIDTH_SM, height: PREVIEW_HEIGHT_SM }}>
+            {operateWatermark && (
+              <Preview watermark={operateWatermark} />
+            )}
+          </div>
+        </div>
+      </Modal>
 
       <style>
         {`

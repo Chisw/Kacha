@@ -3,13 +3,12 @@ import { Modal, Tabs, Tab, Loading } from 'carbon-components-react'
 import WatermarkSetting from './WatermarkSetting'
 import ExportSetting from './ExportSetting'
 import { IWatermark } from '../../ts/type'
-import { EMPTY_WATERMARK } from '../../ts/constant'
 import { getShortId } from '../../ts/utils'
 import Local from '../../ts/local'
 
 interface EditorDialogProps {
   open: boolean
-  watermark?: IWatermark
+  watermark: IWatermark
   setWatermarkList: (list: IWatermark[]) => void
   onClose: () => void
 }
@@ -18,7 +17,7 @@ export default function EditorDialog(props: EditorDialogProps) {
 
   const {
     open,
-    watermark = EMPTY_WATERMARK,
+    watermark,
     setWatermarkList,
     onClose,
   } = props
@@ -53,19 +52,15 @@ export default function EditorDialog(props: EditorDialogProps) {
   const handleSubmit = useCallback(async () => {
     setSubmitting(true)
     const id = watermarkCache!.id
+    let list: IWatermark[] = []
     if (id) {  // update
-      const list = await Local.getList()
-      if (list) {
-        const index = list.findIndex(({ id: _id }, index) => id === _id)
-        if (index > -1) list.splice(index, 1)
-        list.unshift(watermarkCache!)
-        await Local.setList(list)
-        setWatermarkList(list)
-        onClose()
-      }
+      list = await Local.updateList(watermarkCache!, id)
     } else {  // create
-      console.log(getShortId())
+      const newWatermark = Object.assign({}, watermarkCache, { id: getShortId() })
+      list = await Local.updateList(newWatermark)
     }
+    setWatermarkList(list)
+    onClose()
     setSubmitting(false)
   }, [watermarkCache, onClose, setWatermarkList])
 
@@ -101,7 +96,7 @@ export default function EditorDialog(props: EditorDialogProps) {
         </div>
         {submitting && (
           <div className="absolute inset-0 z-20 bg-white-600 bg-hazy-25 flex justify-center items-center">
-            <Loading description="保存中" withOverlay={false} />
+            <Loading withOverlay={false} />
           </div>
         )}
       </Modal>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { IWatermark } from '../ts/type'
-import { FormGroup, ContentSwitcher, Switch } from 'carbon-components-react'
-import { BG_GRID_DATA_DARK, BG_GRID_DATA_LIGHT } from '../ts/constant'
+import { FormGroup, ContentSwitcher, Switch, Loading } from 'carbon-components-react'
+import { BG_GRID_DATA_DARK, BG_GRID_DATA_LIGHT, PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM } from '../ts/constant'
 import { getImageByWatermark, getImageBySrc } from '../ts/utils'
 import { useAsync } from 'react-use'
 
@@ -26,8 +26,8 @@ export default function Preview(props: PreviewProps) {
   const previewState = useAsync(async () => {
     const canvas: HTMLCanvasElement = document.createElement('canvas')
 
-    const width = resizable ? [480, 1080, 1920][selectedIndex] : 200
-    const height = resizable ? [320, 720, 1280][selectedIndex] : 100
+    const width = resizable ? [480, 1080, 1920][selectedIndex] : PREVIEW_WIDTH_SM
+    const height = resizable ? [320, 720, 1280][selectedIndex] : PREVIEW_HEIGHT_SM
 
     canvas.width = width
     canvas.height = height
@@ -87,11 +87,15 @@ export default function Preview(props: PreviewProps) {
       className={`w-full h-full flex justify-center items-center bg-center
         ${theme === 'dark' ? 'bg-grid-light' : 'bg-grid-dark' }`}
     >
-      <img
-        alt="preview"
-        className="max-w-full max-h-full"
-        src={previewState.value}
-      />
+      {previewState.loading ? (
+        <Loading withOverlay={false} />
+      ) : (
+        <img
+          alt="preview"
+          className="max-w-full max-h-full"
+          src={previewState.value}
+        />
+      )}
     </div>
   )
 }
