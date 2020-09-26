@@ -5,7 +5,7 @@ export type SizeChangeType = 'none' | 'pixel' | 'percent'
 export type RepeatType = 'no-repeat' | 'repeat-x' | 'repeat-y' | 'repeat'
 export type PositionType = 'top-left' | 'top' | 'top-right' | 'left' | 'center' | 'right' | 'bottom-left' | 'bottom' | 'bottom-right'
 
-export interface IExportSetting {
+export interface IExportSettingg {
   format: FormatType
   quality: number
   scaleType: SizeChangeType
@@ -34,5 +34,5 @@ export interface IWatermark {
   opacity: number
   rotate: number
   font?: string
-  exportSetting?: IExportSetting
+  exportSetting?: IExportSettingg
 }

@@ -9,6 +9,7 @@ import { useAsync } from 'react-use'
 import { IWatermark } from '../ts/type'
 import Local from '../ts/local'
 import { getShortId } from '../ts/utils'
+import OutputDialog from './OutputDialog'
 
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-100 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -29,6 +30,7 @@ export default function WatermarkList(props: WatermarkListProps) {
   const [editorOpen, setEditorOpen] = useState(false)
   const [operateType, setOperateType] = useState<operateType>('copy')
   const [operateOpen, setOperateOpen] = useState(false)
+  const [exportOpen, setExportOpen] = useState(false)
 
   useAsync(async () => {
     const list = await Local.getList()
@@ -66,11 +68,16 @@ export default function WatermarkList(props: WatermarkListProps) {
     <>
       {!loaded && <Loading />}
 
-      <div className="button-list pb-8">
-        <Button size="small" renderIcon={Store16}>水印屋</Button>
-        <Button size="small" renderIcon={Add16} kind="secondary" onClick={handleAdd}>创建水印</Button>
-        <Button size="small" renderIcon={Download16} kind="secondary">导出水印</Button>
-        <Button size="small" renderIcon={Export16} kind="secondary">导入水印</Button>
+      <div className="pb-8 flex justify-between items-center">
+        <div className="button-list">
+          <Button size="small" renderIcon={Store16}>水印屋</Button>
+          <Button size="small" renderIcon={Add16} kind="secondary" onClick={handleAdd}>创建水印</Button>
+          <Button size="small" renderIcon={Download16} kind="secondary" onClick={() => setExportOpen(true)}>导出水印</Button>
+          <Button size="small" renderIcon={Export16} kind="secondary">导入水印</Button>
+        </div>
+        <div className="text-gray-400">
+          &times;{watermarkList.length}
+        </div>
       </div>
 
       <div className="flex flex-wrap -mx-4">
@@ -80,7 +87,7 @@ export default function WatermarkList(props: WatermarkListProps) {
           return (
             <div
               key={id}
-              className="mb-6 px-4 w-1/2 md:w-1/3 lg:w-1/5"
+              className="mb-8 px-4 w-1/2 md:w-1/3 lg:w-1/5"
             >
               <div className="watermark-wrapper relative h-40 overflow-hidden shadow-lg">
                 <div className="absolute inset-0">
@@ -118,7 +125,9 @@ export default function WatermarkList(props: WatermarkListProps) {
                   </div>
                 </div>
               </div>
-              <div className="mt-2 text-white text-sm truncate text-gray-300">{title || <span className="text-gray-600">[未命名]</span>}</div>
+              <div className="mt-4 text-white text-sm text-center truncate text-gray-300 font-bold">
+                {title || <span className="text-gray-600">[未命名]</span>}
+              </div>
             </div>
           )
         })}
@@ -145,8 +154,9 @@ export default function WatermarkList(props: WatermarkListProps) {
       <Modal
         open={operateOpen}
         className="operate-dialog"
-        size="sm"
+        size="xs"
         modalHeading={`${operateType === 'copy' ? '复制' : '删除' }该水印`}
+        danger={operateType === 'delete'}
         primaryButtonText="确定"
         secondaryButtonText="取消"
         onRequestClose={() => setOperateOpen(false)}
@@ -163,18 +173,50 @@ export default function WatermarkList(props: WatermarkListProps) {
         }}
       >
         <div className="px-4 py-6 flex justify-center">
-          <div className="shadow-lg" style={{ width: PREVIEW_WIDTH_SM, height: PREVIEW_HEIGHT_SM }}>
-            {operateWatermark && (
-              <Preview watermark={operateWatermark} />
-            )}
+          <div>
+            <div className="shadow-lg" style={{ width: PREVIEW_WIDTH_SM, height: PREVIEW_HEIGHT_SM }}>
+              {operateWatermark && <Preview watermark={operateWatermark} />}
+            </div>
+            <div className="mt-4 mx-auto w-48 text-center truncate font-bold">
+              {operateWatermark.title || <span className="text-gray-600">[未命名]</span>}
+            </div>
           </div>
         </div>
       </Modal>
 
+      <OutputDialog
+        open={exportOpen}
+        onClose={() => setExportOpen(false)}
+        watermarkList={watermarkList}
+      />
+
       <style>
         {`
-          .button-list button + button {
-            margin-left: .5rem;
+          .button-list button {
+            margin-right: 1px;
+            margin-bottom: 1px;
+          }
+          .bx--inline-loading {
+            display: inline-block;
+            width: auto;
+          }
+          .bx--modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0;
+            padding-top: 0;
+            padding-right: 0 !important;
+            width: 100%;
+          }
+          .bx--modal-header .bx--modal-close {
+            position: static;
+          }
+          .bx--modal-content {
+            margin-bottom: 0;
+            padding: 0 !important;
+            width: 100%;
+            background-color: #fff;
           }
         `}
       </style>

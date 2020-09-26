@@ -86,7 +86,7 @@ export default function EditorDialog(props: EditorDialogProps) {
                 setWatermark={setWatermarkCache}
               />
             </Tab>
-            <Tab label="导出设置">
+            <Tab label="输出设置">
               <ExportSetting
                 watermark={watermarkCache}
                 setWatermark={setWatermarkCache}
@@ -102,24 +102,6 @@ export default function EditorDialog(props: EditorDialogProps) {
       </Modal>
       <style>
         {`
-          .bx--modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0;
-            padding-top: 0;
-            padding-right: 0 !important;
-            width: 100%;
-          }
-          .bx--modal-header .bx--modal-close {
-            position: static;
-          }
-          .bx--modal-content {
-            margin-bottom: 0;
-            padding: 0 !important;
-            width: 100%;
-            background-color: #fff;
-          }
           .bx--tabs {
             position: absolute;
             z-index: 1;

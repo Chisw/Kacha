@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { IWatermark } from '../ts/type'
-import { FormGroup, ContentSwitcher, Switch, Loading } from 'carbon-components-react'
+import { FormGroup, ContentSwitcher, Switch, InlineLoading } from 'carbon-components-react'
 import { BG_GRID_DATA_DARK, BG_GRID_DATA_LIGHT, PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM } from '../ts/constant'
 import { getImageByWatermark, getImageBySrc } from '../ts/utils'
 import { useAsync } from 'react-use'
@@ -26,8 +26,8 @@ export default function Preview(props: PreviewProps) {
   const previewState = useAsync(async () => {
     const canvas: HTMLCanvasElement = document.createElement('canvas')
 
-    const width = resizable ? [480, 1080, 1920][selectedIndex] : PREVIEW_WIDTH_SM
-    const height = resizable ? [320, 720, 1280][selectedIndex] : PREVIEW_HEIGHT_SM
+    const width = resizable ? [400, 1080, 1920][selectedIndex] : PREVIEW_WIDTH_SM
+    const height = resizable ? [400, 720, 1080][selectedIndex] : PREVIEW_HEIGHT_SM
 
     canvas.width = width
     canvas.height = height
@@ -52,23 +52,23 @@ export default function Preview(props: PreviewProps) {
       <>
         <FormGroup legendText="效果预览">
           <div className="shadow-lg">
-            <div className="relative w-full flex justify-center bg-black">
+            <ContentSwitcher selectedIndex={selectedIndex} onChange={() => { }}>
+              <Switch text="400x400px" onClick={() => setSelectedIndex(0)} onKeyDown={() => { }} />
+              <Switch text="1080x720px" onClick={() => setSelectedIndex(1)} onKeyDown={() => { }} />
+              <Switch text="1920x1080px" onClick={() => setSelectedIndex(2)} onKeyDown={() => { }} />
+            </ContentSwitcher>
+            <div className="relative w-full h-96 flex justify-center items-center bg-black">
               <img
                 alt="preview"
                 className="max-w-full max-h-full"
                 src={previewState.value}
               />
               {previewState.loading && (
-                <div className="absolute top-0 left-0 px-2 py-1 bg-black-800 text-xs">
-                  <span className="text-white">loading..</span>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <InlineLoading />
                 </div>
               )}
             </div>
-            <ContentSwitcher selectedIndex={selectedIndex} onChange={() => { }}>
-              <Switch text="480x320px" onClick={() => setSelectedIndex(0)} onKeyDown={() => { }} />
-              <Switch text="1080x720px" onClick={() => setSelectedIndex(1)} onKeyDown={() => { }} />
-              <Switch text="1920x1280px" onClick={() => setSelectedIndex(2)} onKeyDown={() => { }} />
-            </ContentSwitcher>
           </div>
         </FormGroup>
         <style>
@@ -88,7 +88,7 @@ export default function Preview(props: PreviewProps) {
         ${theme === 'dark' ? 'bg-grid-light' : 'bg-grid-dark' }`}
     >
       {previewState.loading ? (
-        <Loading withOverlay={false} />
+        <InlineLoading />
       ) : (
         <img
           alt="preview"

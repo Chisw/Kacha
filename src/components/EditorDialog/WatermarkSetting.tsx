@@ -74,6 +74,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               id="title"
               labelText=""
               placeholder="请输入标题"
+              maxLength={32}
               value={title}
               onChange={(e: any) => _set('title', e.target.value)}
             />
