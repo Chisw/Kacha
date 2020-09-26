@@ -16,6 +16,8 @@ interface WatermarkListProps {
   setActiveId: (id: string) => void
 }
 
+type operateType = 'copy' | 'delete'
+
 export default function WatermarkList(props: WatermarkListProps) {
   const {
     setActiveId,
@@ -25,8 +27,8 @@ export default function WatermarkList(props: WatermarkListProps) {
   const [watermarkList, setWatermarkList] = useState<IWatermark[]>([])
   const [operateWatermark, setOperateWatermark] = useState<IWatermark>(EMPTY_WATERMARK)
   const [editorOpen, setEditorOpen] = useState(false)
-  const [copyOpen, setCopyOpen] = useState(false)
-  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [operateType, setOperateType] = useState<operateType>('copy')
+  const [operateOpen, setOperateOpen] = useState(false)
 
   useAsync(async () => {
     const list = await Local.getList()
@@ -54,14 +56,10 @@ export default function WatermarkList(props: WatermarkListProps) {
     setEditorOpen(false)
   }, [])
 
-  const handleWatermarkCopy = useCallback((watermark: IWatermark) => {
+  const handleOperate = useCallback((watermark: IWatermark, type: operateType) => {
     setOperateWatermark(watermark)
-    setCopyOpen(true)
-  }, [])
-
-  const handleWatermarkDelete = useCallback((watermark: IWatermark) => {
-    setOperateWatermark(watermark)
-    setDeleteOpen(true)
+    setOperateType(type)
+    setOperateOpen(true)
   }, [])
 
   return (
@@ -107,13 +105,13 @@ export default function WatermarkList(props: WatermarkListProps) {
                     </div>
                     <div
                       className={`py-2 flex-grow ${HOVER_CLASS} text-white border-r border-solid border-gray-800`}
-                      onClick={() => handleWatermarkCopy(watermark)}
+                      onClick={() => handleOperate(watermark, 'copy')}
                     >
                       <Icons.Duplicate />
                     </div>
                     <div
                       className={`py-2 flex-grow ${HOVER_CLASS} text-red-600`}
-                      onClick={() => handleWatermarkDelete(watermark)}
+                      onClick={() => handleOperate(watermark, 'delete')}
                     >
                       <Icons.Delete />
                     </div>
@@ -145,44 +143,26 @@ export default function WatermarkList(props: WatermarkListProps) {
       />
 
       <Modal
-        open={copyOpen}
-        className="copy-dialog"
+        open={operateOpen}
+        className="operate-dialog"
         size="sm"
-        modalHeading="复制该水印"
+        modalHeading={`${operateType === 'copy' ? '复制' : '删除' }该水印`}
         primaryButtonText="确定"
         secondaryButtonText="取消"
-        onRequestClose={() => setCopyOpen(false)}
+        onRequestClose={() => setOperateOpen(false)}
         onRequestSubmit={async () => {
-          const newWatermark = Object.assign({}, operateWatermark, { id: getShortId() })
-          const list = await Local.updateList(newWatermark)
+          let list: IWatermark[] = []
+          if (operateType === 'copy') {
+            const newWatermark = Object.assign({}, operateWatermark, { id: getShortId() })
+            list = await Local.updateList(newWatermark)
+          } else if (operateType === 'delete') {
+            list = await Local.updateList(undefined, operateWatermark.id)
+          }
           setWatermarkList(list)
-          setCopyOpen(false)
+          setOperateOpen(false)
         }}
       >
-        <div className="px-4 py-6">
-          <div className="shadow-lg" style={{ width: PREVIEW_WIDTH_SM, height: PREVIEW_HEIGHT_SM }}>
-            {operateWatermark && (
-              <Preview watermark={operateWatermark} />
-            )}
-          </div>
-        </div>
-      </Modal>
-
-      <Modal
-        open={deleteOpen}
-        className="delete-dialog"
-        size="sm"
-        modalHeading="删除该水印"
-        primaryButtonText="确定"
-        secondaryButtonText="取消"
-        onRequestClose={() => setDeleteOpen(false)}
-        onRequestSubmit={async () => {
-          const list = await Local.updateList(undefined, operateWatermark.id)
-          setWatermarkList(list)
-          setDeleteOpen(false)
-        }}
-      >
-        <div className="px-4 py-6">
+        <div className="px-4 py-6 flex justify-center">
           <div className="shadow-lg" style={{ width: PREVIEW_WIDTH_SM, height: PREVIEW_HEIGHT_SM }}>
             {operateWatermark && (
               <Preview watermark={operateWatermark} />
