@@ -3,7 +3,10 @@ export type ThemeType = 'dark' | 'light'
 export type FormatType = 'origin' | 'jpeg' | 'png' | 'webp'
 export type SizeChangeType = 'none' | 'pixel' | 'percent'
 export type RepeatType = 'no-repeat' | 'repeat-x' | 'repeat-y' | 'repeat'
-export type PositionType = 'top-left' | 'top' | 'top-right' | 'left' | 'center' | 'right' | 'bottom-left' | 'bottom' | 'bottom-right'
+export type PositionType =
+  'left-top' | 'center-top' | 'right-top' |
+  'center-left' | 'center-center' | 'center-right' |
+  'left-bottom' | 'center-bottom' | 'right-bottom'
 
 export interface IExportSettingg {
   format: FormatType

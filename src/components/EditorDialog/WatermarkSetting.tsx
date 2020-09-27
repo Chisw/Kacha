@@ -362,15 +362,9 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
 }
 
 const positionMap = {
-  'top-left': '左上',
-  'top': '上',
-  'top-right': '右上',
-  'left': '左',
-  'center': '中',
-  'right': '右',
-  'bottom-left': '左下',
-  'bottom': '下',
-  'bottom-right': '右下',
+  'left-top': '左上', 'center-top': '上', 'right-top': '右上',
+  'left-center': '左', 'center-center': '中', 'right-center': '右',
+  'left-bottom': '左下', 'center-bottom': '下', 'right-bottom': '右下',
 }
 
 function PositionSelector(props: { selected: string, onSelect: (p: string) => void }) {

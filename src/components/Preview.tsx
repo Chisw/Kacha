@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { IWatermark } from '../ts/type'
 import { FormGroup, ContentSwitcher, Switch, InlineLoading } from 'carbon-components-react'
 import { BG_GRID_DATA_DARK, BG_GRID_DATA_LIGHT, PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM } from '../ts/constant'
-import { getImageByWatermark, getImageBySrc } from '../ts/utils'
+import { getImageBySrc, drawWatermark2Canvas } from '../ts/utils'
 import { useAsync } from 'react-use'
 
 interface PreviewProps {
@@ -16,10 +16,6 @@ export default function Preview(props: PreviewProps) {
     watermark,
     resizable = false,
   } = props
-
-  const {
-    theme,
-  } = watermark
 
   const [selectedIndex, setSelectedIndex] = useState(0)
 
@@ -38,9 +34,7 @@ export default function Preview(props: PreviewProps) {
     ctx!.fillStyle = ctx!.createPattern(bgImg, 'repeat') as CanvasPattern
     ctx!.fillRect(0, 0, width, height)
 
-    const patternImg = await getImageByWatermark(watermark, { width, height })
-    ctx!.fillStyle = ctx!.createPattern(patternImg, watermark.repeat) as CanvasPattern
-    ctx!.fillRect(0, 0, width, height)
+    await drawWatermark2Canvas(watermark, canvas)
 
     return canvas.toDataURL('image/png')
   }, [resizable, selectedIndex, watermark])
@@ -81,10 +75,7 @@ export default function Preview(props: PreviewProps) {
   }
 
   return (
-    <div
-      className={`w-full h-full flex justify-center items-center bg-center
-        ${theme === 'dark' ? 'bg-white' : 'bg-black' }`}
-    >
+    <div className="w-full h-full flex justify-center items-center bg-center bg-black">
       {previewState.loading ? (
         <InlineLoading />
       ) : (
