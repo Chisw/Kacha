@@ -11,7 +11,7 @@ export default function Layout(props: LayoutProps) {
   return (
     <>
       <div
-        className="min-h-screen pt-12 px-4 bg-center flex flex-col select-none"
+        className="min-h-screen pt-12 px-4 bg-center flex flex-col select-none bg-fixed"
         style={{ backgroundImage: `url(${blueprint}), linear-gradient(0, rgba(74, 85, 104), rgba(0, 0, 0))` }}
       >
         <Header />

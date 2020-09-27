@@ -52,7 +52,7 @@ export default function OutputDialog(props: OutputDialogProps) {
         open={open}
         size="sm"
         className="export-modal"
-        modalHeading="导出水印"
+        modalHeading="导出水印配置"
         primaryButtonText={`导出 ${selectedIndex.length} 枚水印`}
         primaryButtonDisabled={!selectedIndex.length}
         secondaryButtonText="取消"
@@ -68,8 +68,8 @@ export default function OutputDialog(props: OutputDialogProps) {
                     <TableHead>
                       <TableRow>
                         <TableSelectAll
-                          id="select-all"
-                          name="select-all"
+                          id="select-all-output"
+                          name="select-all-output"
                           checked={selectedIndex.length === watermarkList.length}
                           onSelect={handleSelectAll}
                         />
@@ -81,8 +81,8 @@ export default function OutputDialog(props: OutputDialogProps) {
                       {watermarkList.map((w, index) => (
                         <TableRow key={w.id} >
                           <TableSelectRow
-                            id={`select-row-${index}`}
-                            name={`select-row-${index}`}
+                            id={`select-row-${index}-output`}
+                            name={`select-row-${index}-output`}
                             ariaLabel=""
                             checked={selectedIndex.includes(index)}
                             onSelect={() => handleSelectRow(index)}

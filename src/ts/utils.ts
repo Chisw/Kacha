@@ -1,5 +1,12 @@
 import { IWatermark } from './type'
+import { isString } from 'lodash'
 
+export const isWatermark = (obj: any) => {
+  return isString(obj.id)
+    && isString(obj.title)
+    && isString(obj.type)
+    && isString(obj.theme)
+}
 
 export const getImageBySrc: (src: string) => Promise<CanvasImageSource> = async (src) => {
   return new Promise((resolve, reject) => {

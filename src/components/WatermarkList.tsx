@@ -10,6 +10,7 @@ import { IWatermark } from '../ts/type'
 import Local from '../ts/local'
 import { getShortId } from '../ts/utils'
 import OutputDialog from './OutputDialog'
+import InputDialog from './InputDialog'
 
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-100 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -30,7 +31,9 @@ export default function WatermarkList(props: WatermarkListProps) {
   const [editorOpen, setEditorOpen] = useState(false)
   const [operateType, setOperateType] = useState<operateType>('copy')
   const [operateOpen, setOperateOpen] = useState(false)
-  const [exportOpen, setExportOpen] = useState(false)
+  const [outputOpen, setOutputOpen] = useState(false)
+  const [inputOpen, setInputOpen] = useState(false)
+
 
   useAsync(async () => {
     const list = await Local.getList()
@@ -72,8 +75,8 @@ export default function WatermarkList(props: WatermarkListProps) {
         <div className="button-list">
           <Button size="small" renderIcon={Store16}>水印屋</Button>
           <Button size="small" renderIcon={Add16} kind="secondary" onClick={handleAdd}>创建水印</Button>
-          <Button size="small" renderIcon={Download16} kind="secondary" onClick={() => setExportOpen(true)}>导出水印</Button>
-          <Button size="small" renderIcon={Export16} kind="secondary">导入水印</Button>
+          <Button size="small" renderIcon={Download16} kind="secondary" onClick={() => setOutputOpen(true)}>导出水印配置</Button>
+          <Button size="small" renderIcon={Export16} kind="secondary" onClick={() => setInputOpen(true)}>导入水印配置</Button>
         </div>
         <div className="text-gray-400">
           &times;{watermarkList.length}
@@ -135,7 +138,7 @@ export default function WatermarkList(props: WatermarkListProps) {
         <div className="mb-8 px-4 w-1/2 md:w-1/3 lg:w-1/5">
           <div
             className={`h-40 bg-gray-900 border-2 border-dashed flex justify-center items-center text-white text-6xl cursor-pointer
-              opacity-25 hover:opacity-75 transition-all duration-200 bg-hazy-100 active:duration-75 active:opacity-25`}
+              opacity-25 hover:opacity-50 transition-all duration-200 bg-hazy-100 active:duration-75 active:opacity-25`}
             onClick={handleAdd}
           >
             <Icons.Plus size={48} />
@@ -155,7 +158,7 @@ export default function WatermarkList(props: WatermarkListProps) {
         open={operateOpen}
         className="operate-dialog"
         size="xs"
-        modalHeading={`${operateType === 'copy' ? '复制' : '删除' }该水印`}
+        modalHeading={`${operateType === 'copy' ? '拷贝' : '删除' }该水印`}
         danger={operateType === 'delete'}
         primaryButtonText="确定"
         secondaryButtonText="取消"
@@ -163,7 +166,7 @@ export default function WatermarkList(props: WatermarkListProps) {
         onRequestSubmit={async () => {
           let list: IWatermark[] = []
           if (operateType === 'copy') {
-            const newWatermark = Object.assign({}, operateWatermark, { id: getShortId() })
+            const newWatermark = Object.assign({}, operateWatermark, { id: getShortId(), title: `${operateWatermark.title}-拷贝`.slice(-32) })
             list = await Local.updateList(newWatermark)
           } else if (operateType === 'delete') {
             list = await Local.updateList(undefined, operateWatermark.id)
@@ -185,9 +188,15 @@ export default function WatermarkList(props: WatermarkListProps) {
       </Modal>
 
       <OutputDialog
-        open={exportOpen}
-        onClose={() => setExportOpen(false)}
+        open={outputOpen}
+        onClose={() => setOutputOpen(false)}
         watermarkList={watermarkList}
+      />
+
+      <InputDialog
+        open={inputOpen}
+        onClose={() => setInputOpen(false)}
+        setWatermarkList={setWatermarkList}
       />
 
       <style>
@@ -217,6 +226,15 @@ export default function WatermarkList(props: WatermarkListProps) {
             padding: 0 !important;
             width: 100%;
             background-color: #fff;
+          }
+          .bx--file-browse-btn {
+            max-width: none;
+          }
+          .bx--file-browse-btn .bx--file__drop-container {
+            min-height: 12rem;
+          }
+          .bx--file-browse-btn .bx--file__drop-container:hover {
+            opacity: .75;
           }
         `}
       </style>
