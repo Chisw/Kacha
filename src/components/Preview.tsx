@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { IWatermark } from '../ts/type'
 import { FormGroup, ContentSwitcher, Switch, InlineLoading } from 'carbon-components-react'
 import { BG_GRID_DATA_DARK, BG_GRID_DATA_LIGHT, PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM } from '../ts/constant'
-import { getImageBySrc, drawWatermark2Canvas } from '../ts/utils'
+import { getImageByDataURL, drawWatermark2Canvas } from '../ts/utils'
 import { useAsync } from 'react-use'
 
 interface PreviewProps {
@@ -22,15 +22,15 @@ export default function Preview(props: PreviewProps) {
   const previewState = useAsync(async () => {
     const canvas: HTMLCanvasElement = document.createElement('canvas')
 
-    const width = resizable ? [300, 720, 1920][selectedIndex] : PREVIEW_WIDTH_SM
-    const height = resizable ? [160, 1080, 1080][selectedIndex] : PREVIEW_HEIGHT_SM
+    const width = resizable ? [300, 1080, 1920][selectedIndex] : PREVIEW_WIDTH_SM
+    const height = resizable ? [160, 720, 1080][selectedIndex] : PREVIEW_HEIGHT_SM
 
     canvas.width = width
     canvas.height = height
 
     const ctx = canvas.getContext('2d')
 
-    const bgImg = await getImageBySrc(watermark.theme === 'dark' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK)
+    const bgImg = await getImageByDataURL(watermark.theme === 'dark' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK)
     ctx!.fillStyle = ctx!.createPattern(bgImg, 'repeat') as CanvasPattern
     ctx!.fillRect(0, 0, width, height)
 
@@ -46,7 +46,7 @@ export default function Preview(props: PreviewProps) {
           <div className="shadow-lg">
             <ContentSwitcher selectedIndex={selectedIndex} onChange={() => { }}>
               <Switch text="300x160px" onClick={() => setSelectedIndex(0)} onKeyDown={() => { }} />
-              <Switch text="720x1080px" onClick={() => setSelectedIndex(1)} onKeyDown={() => { }} />
+              <Switch text="1080x720px" onClick={() => setSelectedIndex(1)} onKeyDown={() => { }} />
               <Switch text="1920x1080px" onClick={() => setSelectedIndex(2)} onKeyDown={() => { }} />
             </ContentSwitcher>
             <div className="relative w-full h-96 flex justify-center items-center bg-black">

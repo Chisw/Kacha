@@ -22,7 +22,7 @@ export interface IWatermark {
   title: string
   type: WatermarkType
   theme: ThemeType
-  src: string
+  dataURL: string
   text: string
   width: number
   height: number

@@ -1,11 +1,11 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { IWatermark } from '../../ts/type'
-import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput, Slider } from 'carbon-components-react'
+import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput, Slider, InlineNotification } from 'carbon-components-react'
 import { FileUploaderButton} from 'carbon-components-react'
 import ToggleBox from '../ToggleBox'
 import { get } from 'lodash'
 import Preview from '../Preview'
-import { getImageBySrc } from '../../ts/utils'
+import { getImageByDataURL } from '../../ts/utils'
 
 interface WatermarkSettingProps {
   watermark: IWatermark,
@@ -42,17 +42,19 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
   const offsetXInputRef = useRef<any>(null)
   const offsetYInputRef = useRef<any>(null)
 
+  const [isLarge, setIsLarge] = useState(false)
+
   const _set = useCallback((key: string, value: any) => {
     setWatermark(Object.assign({}, watermark, { [key]: value }))
   }, [watermark, setWatermark])
 
-  const getDataByFile = useCallback<{ src: string, width: number, height: number} | any>(async (file: any) => {
+  const getDataByFile = useCallback<{ dataURL: string, width: number, height: number} | any>(async (file: any) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onload = async (e: any) => {
-        const src = e.target.result
-        const { width, height } = await getImageBySrc(src)
-        resolve({ src, width, height })
+        const dataURL = e.target.result
+        const { width, height } = await getImageByDataURL(dataURL)
+        resolve({ dataURL, width, height })
       }
       reader.onerror = reject
       reader.readAsDataURL(file)
@@ -63,10 +65,12 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     const file = get(e, 'target.files[0]', null)
     if (file) {
       if (file.size < 1024 * 1024) {
-        const { src, width, height } = await getDataByFile(file)
-        setWatermark(Object.assign({}, watermark, { src, width, height }))
+        const { dataURL, width, height } = await getDataByFile(file)
+        setWatermark(Object.assign({}, watermark, { dataURL, width, height }))
+        setIsLarge(false)
       } else {
-
+        setWatermark(Object.assign({}, watermark, { dataURL: '', width: 0, height: 0 }))
+        setIsLarge(true)
       }
     }
   }, [getDataByFile, watermark, setWatermark])
@@ -135,6 +139,14 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               <div className="mt-2 text-xs text-gray-500 leading-relaxed">
                 仅支持 1M 以下的 .jpg 或 .png
               </div>
+              {isLarge && (
+                <InlineNotification
+                  lowContrast
+                  title="图片过大"
+                  kind="warning"
+                  onCloseButtonClick={() => setIsLarge(false)}
+                />
+              )}
             </FormGroup>
           </ToggleBox>
 

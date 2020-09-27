@@ -44,10 +44,10 @@ export const isWatermark = (obj: any) => {
     && isString(obj.theme)
 }
 
-export const getImageBySrc: (src: string) => Promise<CanvasImageSource> = async (src) => {
+export const getImageByDataURL: (dataURL: string) => Promise<CanvasImageSource> = async (dataURL) => {
   return new Promise((resolve, reject) => {
     const img = new Image()
-    img.src = src
+    img.src = dataURL
     img.onload = () => resolve(img)
     img.onerror = reject
   })
@@ -82,7 +82,7 @@ export const getWatermarkDataURL: (wm: IWatermark) => Promise<string> = async (w
   const {
     type,
     text,
-    src,
+    dataURL,
     width: wmWidth,
     height: wmHeight,
     scaleType,
@@ -121,8 +121,8 @@ export const getWatermarkDataURL: (wm: IWatermark) => Promise<string> = async (w
   ctx!.translate(-center.x, -center.y)
 
   if (type === 'image') {
-    if (src) {
-      await drawDataURL2Canvas(src, canvas)
+    if (dataURL) {
+      await drawDataURL2Canvas(dataURL, canvas)
     }
   } else if (type === 'text') {
     ctx!.fillStyle = '#f00'
