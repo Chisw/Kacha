@@ -1,10 +1,11 @@
 import React, { useCallback, useRef } from 'react'
 import { IWatermark } from '../../ts/type'
 import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput, Slider } from 'carbon-components-react'
-// import { FileUploader} from 'carbon-components-react'
+import { FileUploaderButton} from 'carbon-components-react'
 import ToggleBox from '../ToggleBox'
 import { get } from 'lodash'
 import Preview from '../Preview'
+import { getImageBySrc } from '../../ts/utils'
 
 interface WatermarkSettingProps {
   watermark: IWatermark,
@@ -44,6 +45,31 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
   const _set = useCallback((key: string, value: any) => {
     setWatermark(Object.assign({}, watermark, { [key]: value }))
   }, [watermark, setWatermark])
+
+  const getDataByFile = useCallback<{ src: string, width: number, height: number} | any>(async (file: any) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = async (e: any) => {
+        const src = e.target.result
+        const { width, height } = await getImageBySrc(src)
+        resolve({ src, width, height })
+      }
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }, [])
+
+  const handleFileChange = useCallback(async (e: any) => {
+    const file = get(e, 'target.files[0]', null)
+    if (file) {
+      if (file.size < 1024 * 1024) {
+        const { src, width, height } = await getDataByFile(file)
+        setWatermark(Object.assign({}, watermark, { src, width, height }))
+      } else {
+
+      }
+    }
+  }, [getDataByFile, watermark, setWatermark])
 
   return (
     <>
@@ -101,12 +127,14 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
           
           <ToggleBox isOpen={type === 'image'}>
             <FormGroup legendText="图片">
-              {/* <FileUploader
-                buttonLabel="选择图片"
-                labelDescription="仅支持 1M 以下的 .jpg 或 .png"
-                filenameStatus="complete"
+              <FileUploaderButton
+                labelText="选择图片"
                 accept={['.jpeg', '.jpg', '.png']}
-              /> */}
+                onChange={handleFileChange}
+              />
+              <div className="mt-2 text-xs text-gray-500 leading-relaxed">
+                仅支持 1M 以下的 .jpg 或 .png
+              </div>
             </FormGroup>
           </ToggleBox>
 

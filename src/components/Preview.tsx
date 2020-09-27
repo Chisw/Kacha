@@ -26,22 +26,20 @@ export default function Preview(props: PreviewProps) {
   const previewState = useAsync(async () => {
     const canvas: HTMLCanvasElement = document.createElement('canvas')
 
-    const width = resizable ? [400, 1080, 1920][selectedIndex] : PREVIEW_WIDTH_SM
-    const height = resizable ? [400, 720, 1080][selectedIndex] : PREVIEW_HEIGHT_SM
+    const width = resizable ? [300, 720, 1920][selectedIndex] : PREVIEW_WIDTH_SM
+    const height = resizable ? [160, 1080, 1080][selectedIndex] : PREVIEW_HEIGHT_SM
 
     canvas.width = width
     canvas.height = height
 
     const ctx = canvas.getContext('2d')
 
-    if (resizable) {
-      const img = await getImageBySrc(watermark.theme === 'dark' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK)
-      ctx!.fillStyle = ctx!.createPattern(img, 'repeat') as CanvasPattern
-      ctx!.fillRect(0, 0, width, height)
-    }
+    const bgImg = await getImageBySrc(watermark.theme === 'dark' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK)
+    ctx!.fillStyle = ctx!.createPattern(bgImg, 'repeat') as CanvasPattern
+    ctx!.fillRect(0, 0, width, height)
 
-    const img = await getImageByWatermark(watermark)
-    ctx!.fillStyle = ctx!.createPattern(img, watermark.repeat) as CanvasPattern
+    const patternImg = await getImageByWatermark(watermark, { width, height })
+    ctx!.fillStyle = ctx!.createPattern(patternImg, watermark.repeat) as CanvasPattern
     ctx!.fillRect(0, 0, width, height)
 
     return canvas.toDataURL('image/png')
@@ -53,8 +51,8 @@ export default function Preview(props: PreviewProps) {
         <FormGroup legendText="效果预览">
           <div className="shadow-lg">
             <ContentSwitcher selectedIndex={selectedIndex} onChange={() => { }}>
-              <Switch text="400x400px" onClick={() => setSelectedIndex(0)} onKeyDown={() => { }} />
-              <Switch text="1080x720px" onClick={() => setSelectedIndex(1)} onKeyDown={() => { }} />
+              <Switch text="300x160px" onClick={() => setSelectedIndex(0)} onKeyDown={() => { }} />
+              <Switch text="720x1080px" onClick={() => setSelectedIndex(1)} onKeyDown={() => { }} />
               <Switch text="1920x1080px" onClick={() => setSelectedIndex(2)} onKeyDown={() => { }} />
             </ContentSwitcher>
             <div className="relative w-full h-96 flex justify-center items-center bg-black">
@@ -85,7 +83,7 @@ export default function Preview(props: PreviewProps) {
   return (
     <div
       className={`w-full h-full flex justify-center items-center bg-center
-        ${theme === 'dark' ? 'bg-grid-light' : 'bg-grid-dark' }`}
+        ${theme === 'dark' ? 'bg-white' : 'bg-black' }`}
     >
       {previewState.loading ? (
         <InlineLoading />

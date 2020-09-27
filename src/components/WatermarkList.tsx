@@ -33,7 +33,7 @@ export default function WatermarkList(props: WatermarkListProps) {
   const [operateOpen, setOperateOpen] = useState(false)
   const [outputOpen, setOutputOpen] = useState(false)
   const [inputOpen, setInputOpen] = useState(false)
-
+  const [operating, setOperating] = useState(false)
 
   useAsync(async () => {
     const list = await Local.getList()
@@ -96,7 +96,7 @@ export default function WatermarkList(props: WatermarkListProps) {
                 <div className="absolute inset-0">
                   <Preview watermark={watermark} />
                 </div>
-                <div className="absolute inset-0 opacity-0 hover:opacity-100 flex flex-col bg-black-500 bg-hazy-25 transition-all duration-200 border border-solid border-gray-800">
+                <div className="absolute inset-0 opacity-0 hover:opacity-100 flex flex-col bg-black-500 bg-hazy-50 transition-all duration-200 border border-solid border-gray-800">
                   <div
                     className={`flex-grow ${HOVER_CLASS} text-white text-sm border-b border-solid border-gray-800`}
                     onClick={() => setActiveId(id)}
@@ -164,6 +164,7 @@ export default function WatermarkList(props: WatermarkListProps) {
         secondaryButtonText="取消"
         onRequestClose={() => setOperateOpen(false)}
         onRequestSubmit={async () => {
+          setOperating(true)
           let list: IWatermark[] = []
           if (operateType === 'copy') {
             const newWatermark = Object.assign({}, operateWatermark, { id: getShortId(), title: `${operateWatermark.title}-拷贝`.slice(-32) })
@@ -172,6 +173,7 @@ export default function WatermarkList(props: WatermarkListProps) {
             list = await Local.updateList(undefined, operateWatermark.id)
           }
           setWatermarkList(list)
+          setOperating(false)
           setOperateOpen(false)
         }}
       >
@@ -185,6 +187,11 @@ export default function WatermarkList(props: WatermarkListProps) {
             </div>
           </div>
         </div>
+        {operating && (
+          <div className="absolute inset-0 z-20 bg-white-600 bg-hazy-25 flex justify-center items-center">
+            <Loading withOverlay={false} />
+          </div>
+        )}
       </Modal>
 
       <OutputDialog

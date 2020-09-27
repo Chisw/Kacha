@@ -11,39 +11,88 @@ export const isWatermark = (obj: any) => {
 export const getImageBySrc: (src: string) => Promise<CanvasImageSource> = async (src) => {
   return new Promise((resolve, reject) => {
     const img = new Image()
-    // img.setAttribute('crossOrigin', 'Anonymous')
     img.src = src
     img.onload = () => resolve(img)
-    img.onerror = () => reject()
+    img.onerror = reject
   })
 }
 
-export const getImageByWatermark: (w: IWatermark) => Promise<CanvasImageSource> = async (watermark) => {
+export const drawSrcToCtx = async (src: string, ctx: CanvasRenderingContext2D, width: number, height: number) => {
+  return new Promise((resolve, reject) => {
+    const svgImg = new Image()
+    svgImg.width = width
+    svgImg.height = height
+    svgImg.onload = () => {
+      ctx!.drawImage(svgImg, 0, 0, width, height)
+      resolve()
+    }
+    svgImg.onerror = reject
+    svgImg.src = `data:image/svg+xml;charset=utf-8,
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <foreignObject width="${width}" height="${height}">
+          <body xmlns="http://www.w3.org/1999/xhtml" style="margin:0; padding:0;" >
+            <div style="width:${width}px; height:${height}px; font-size:0; display:flex; justify-content:center; align-items:center;">
+              <img src="${src}" style="display:block; max-width:100%; max-height:100%;" />
+            </div>
+          </body>
+        </foreignObject>
+      </svg>`
+  })
+}
+
+type getImageByWatermark = (watermark: IWatermark, outer: { width: number, height: number }) => Promise<CanvasImageSource>
+
+export const getImageByWatermark: getImageByWatermark = async (watermark, outer) => {
   const {
+    type,
     text,
+    src,
+    width: wWidth,
+    height: wHeight,
+    scaleType,
+    scalePixel,
+    scalePercent,
     opacity,
     rotate,
   } = watermark
 
+  let width = 200
+  let height = 32
+  if (type === 'image') {
+    if (scaleType === 'pixel') {
+      width = scalePixel
+      height = wHeight * (width / wWidth)
+    } else if (scaleType === 'percent') {
+      width = outer.width * (scalePercent / 100)
+      height = wHeight * (width / wWidth)
+    } else {
+      width = wWidth
+      height = wHeight
+    }
+  }
+
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
-  canvas.width = 100
-  canvas.height = 32
+  canvas.width = width
+  canvas.height = height
   const center = {
-    x: 50,
-    y: 16,
+    x: width / 2,
+    y: height / 2,
   }
   ctx!.globalAlpha = opacity / 100
   ctx!.translate(center.x, center.y)
   ctx!.rotate(rotate * Math.PI / 180)
   ctx!.translate(-center.x, -center.y)
-  ctx!.fillStyle = '#f00'
-  ctx!.textAlign = 'left'
-  ctx!.fillStyle = '32px monospace'
-  ctx!.fillText(text, 0, 32)
 
+  if (type === 'image' && src) {
+    await drawSrcToCtx(src, ctx!, width, height)
+  } else if (type === 'text') {
+    ctx!.fillStyle = '#f00'
+    ctx!.textAlign = 'left'
+    ctx!.fillStyle = '32px monospace'
+    ctx!.fillText(text, 0, 32)
+  }
   const dataURL = canvas.toDataURL('image/png')
-
   return getImageBySrc(dataURL)
 }
 

@@ -21,6 +21,8 @@ export interface IWatermark {
   theme: ThemeType
   src: string
   text: string
+  width: number
+  height: number
   position: PositionType
   scaleType: SizeChangeType
   scalePixel: number
