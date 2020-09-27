@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Modal, DataTable, TableContainer, Table, TableHead, TableRow, TableSelectAll, TableHeader, TableBody, TableSelectRow, TableCell, Loading, FileUploaderDropContainer, Button, Tag } from 'carbon-components-react'
-import Preview from './Preview'
+import { Modal, Loading, FileUploaderDropContainer, Button, Tag } from 'carbon-components-react'
 import { IWatermark } from '../ts/type'
 import { range, get, isArray } from 'lodash'
 import { Reset16 } from '@carbon/icons-react'
-import { isWatermark, getShortId } from '../ts/utils'
+import { isWatermark, getShortId, getBytesSize } from '../ts/utils'
 import Local from '../ts/local'
+import IOTable from './IOTable'
 
 interface InputDialogProps {
   open: boolean
@@ -25,7 +25,17 @@ export default function InputDialog(props: InputDialogProps) {
   const [inputError, setInputError] = useState('')
   const [inputWatermarkList, setInputWatermarkList] = useState<IWatermark[]>([])
   const [selectedIndex, setSelectedIndex] = useState<number[]>([])
+  const [selectedJSON, setSelectedJSON] = useState('')
   const [isInputting, setIsInputting] = useState(false)
+
+  useEffect(() => {
+    setUploadFile(null)
+  }, [open])
+
+  useEffect(() => {
+    const json = JSON.stringify(inputWatermarkList.filter((w, i) => selectedIndex.includes(i)))
+    setSelectedJSON(json)
+  }, [selectedIndex, inputWatermarkList])
 
   useEffect(() => {
     setSelectedIndex(range(inputWatermarkList.length))
@@ -52,27 +62,18 @@ export default function InputDialog(props: InputDialogProps) {
     }
   }, [uploadFile])
 
-  const handleSelectAll = useCallback(() => {
-    setSelectedIndex(selectedIndex.length ? [] : range(inputWatermarkList.length))
-  }, [selectedIndex, inputWatermarkList])
-
-  const handleSelectRow = useCallback((index: number) => {
-    const isIncluded = selectedIndex.includes(index)
-    const list = isIncluded
-      ? selectedIndex.filter(i => i !== index)
-      : [...selectedIndex, index]
-    setSelectedIndex(list)
-  }, [selectedIndex])
-
   const handleInput = useCallback(async () => {
     setIsInputting(true)
     const existList: IWatermark[] = await Local.getList() || []
-    const newList: IWatermark[] = inputWatermarkList.map(w => Object.assign(w, { id: getShortId(), title: `${w.title}-导入` }))
+    const newList: IWatermark[] = inputWatermarkList
+      .filter((w, i) => selectedIndex.includes(i))
+      .map(w => Object.assign(w, { id: getShortId(), title: `${w.title}-导入` }))
     const concatList = await Local.setList([...newList, ...existList])
     setWatermarkList(concatList)
     setIsInputting(false)
+    setUploadFile(null)
     onClose()
-  }, [inputWatermarkList, onClose, setWatermarkList])
+  }, [inputWatermarkList, selectedIndex, onClose, setWatermarkList])
 
   return (
     <>
@@ -81,7 +82,7 @@ export default function InputDialog(props: InputDialogProps) {
         size="sm"
         className="export-modal"
         modalHeading="导入水印配置"
-        primaryButtonText={`导入 ${selectedIndex.length} 枚水印`}
+        primaryButtonText={`导入 ${selectedIndex.length} 枚水印（${selectedIndex.length ? getBytesSize(selectedJSON.length) : '0'}）`}
         primaryButtonDisabled={!selectedIndex.length}
         secondaryButtonText="取消"
         onRequestClose={onClose}
@@ -108,45 +109,12 @@ export default function InputDialog(props: InputDialogProps) {
           </div>
         )}
         {(uploadFile && !inputError) && (
-          <div className="bg-white">
-            <DataTable rows={[]} headers={[]}>
-              {() => {
-                return (
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableSelectAll
-                            id="select-all-input"
-                            name="select-all-input"
-                            checked={selectedIndex.length === inputWatermarkList.length}
-                            onSelect={handleSelectAll}
-                          />
-                          <TableHeader>预览</TableHeader>
-                          <TableHeader>标题</TableHeader>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {inputWatermarkList.map((w, index) => (
-                          <TableRow key={w.id} >
-                            <TableSelectRow
-                              id={`select-row-${index}-input`}
-                              name={`select-row-${index}-input`}
-                              ariaLabel=""
-                              checked={selectedIndex.includes(index)}
-                              onSelect={() => handleSelectRow(index)}
-                            />
-                            <TableCell>{<div className="w-20"><Preview watermark={w} /></div>}</TableCell>
-                            <TableCell>{w.title}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                )
-              }}
-            </DataTable>
-          </div>
+          <IOTable
+            name="input"
+            watermarkList={inputWatermarkList}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
+          />
         )}
         {isInputting && (
           <div className="absolute inset-0 z-20 bg-white-600 bg-hazy-25 flex justify-center items-center">

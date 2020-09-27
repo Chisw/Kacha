@@ -51,3 +51,33 @@ export const getShortId = (n?: number) => Array
   .from('*'.repeat(n || 6))
   .map(() => Math.random().toString(36)[2])
   .join('')
+
+export const getTypeBase64Bytes = (typeBase64: string) => {
+  if (!typeBase64) return 0
+  let padding = 0
+  if (typeBase64.endsWith('==')) {
+    padding = 2
+  } else if (typeBase64.endsWith('=')) {
+    padding = 1
+  }
+  const bytes = (typeBase64.length / 4) * 3 - padding
+  return bytes
+}
+
+export const getBytesSize = (bytes: number, unit?: 'B' | 'KB' | 'MB' | 'GB') => {
+  if (!unit) {
+    if (0 <= bytes && bytes < 1024) {
+      unit = 'B'
+    } else if (1024 <= bytes && bytes < 1048576) {
+      unit = 'KB'
+    } else if (1048576 <= bytes && bytes < 1073741824) {
+      unit = 'MB'
+    } else {
+      unit = 'GB'
+    }
+  }
+  const level = ['B', 'KB', 'MB', 'GB'].indexOf(unit)
+  const divisor = [1, 1024, 1048576, 1073741824][level]
+  const result = `${(bytes / divisor).toFixed(unit === 'B' ? 0 : 2)} ${unit}`
+  return result
+}
