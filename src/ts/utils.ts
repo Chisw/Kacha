@@ -56,6 +56,8 @@ export const getImageByDataURL: (dataURL: string) => Promise<CanvasImageSource> 
 export const drawDataURL2Canvas = async (dataURL: string, canvas: HTMLCanvasElement) => {
   const ctx = canvas.getContext('2d')
   const { width, height } = canvas
+  console.log(width, height)
+
   return new Promise((resolve, reject) => {
     const svgImg = new Image()
     svgImg.width = width
@@ -69,8 +71,8 @@ export const drawDataURL2Canvas = async (dataURL: string, canvas: HTMLCanvasElem
       <svg xmlns="http://www.w3.org/2000/svg">
         <foreignObject width="${width}" height="${height}">
           <body xmlns="http://www.w3.org/1999/xhtml" style="margin:0; padding:0;" >
-            <div style="width:${width}px; height:${height}px; font-size:0; display:flex; justify-content:center; align-items:center;">
-              <img src="${dataURL}" style="display:block; max-width:100%; max-height:100%;" />
+            <div style="width:${width}px; height:${height}px; font-size:0;">
+              <img src="${dataURL}" style="display:block; width:${width}px; height:${height}px;" />
             </div>
           </body>
         </foreignObject>
@@ -78,7 +80,7 @@ export const drawDataURL2Canvas = async (dataURL: string, canvas: HTMLCanvasElem
   })
 }
 
-export const getWatermarkDataURL: (wm: IWatermark) => Promise<string> = async (watermark) => {
+export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number) => Promise<string> = async (watermark, outerWidth, outerHeight) => {
   const {
     type,
     text,
@@ -99,7 +101,7 @@ export const getWatermarkDataURL: (wm: IWatermark) => Promise<string> = async (w
       width = scalePixel
       height = wmHeight * (width / wmWidth)
     } else if (scaleType === 'percent') {
-      width = wmWidth * (scalePercent / 100)
+      width = outerWidth * (scalePercent / 100)
       height = wmHeight * (width / wmWidth)
     } else {
       width = wmWidth || PREVIEW_WIDTH_SM
@@ -136,12 +138,12 @@ export const getWatermarkDataURL: (wm: IWatermark) => Promise<string> = async (w
 
 export const drawWatermark2Canvas = async (watermark: IWatermark, canvas: HTMLCanvasElement) => {
 
-  const dataURL = await getWatermarkDataURL(watermark)
-  const { position, repeat } = watermark
-  const [x, y] = position.split('-')
-
   const ctx = canvas.getContext('2d')
   const { width, height } = canvas
+
+  const dataURL = await getWatermarkDataURL(watermark, width, height)
+  const { position, repeat } = watermark
+  const [x, y] = position.split('-')
 
   return new Promise((resolve, reject) => {
     const svgImg = new Image()
