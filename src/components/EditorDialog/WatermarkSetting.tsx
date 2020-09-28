@@ -21,13 +21,16 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
 
   const {
     title,
-    type,
     theme,
+    type,
     text,
-    position,
+    width,
+    height,
     scaleType,
+    scaleBase,
     scalePixel,
     scalePercent,
+    position,
     offsetType,
     offsetPixelX,
     offsetPixelY,
@@ -38,6 +41,8 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     rotate,
   } = watermark
 
+  const widthInputRef = useRef<any>(null)
+  const heightInputRef = useRef<any>(null)
   const scaleInputRef = useRef<any>(null)
   const offsetXInputRef = useRef<any>(null)
   const offsetYInputRef = useRef<any>(null)
@@ -79,289 +84,338 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     <>
       <div className="mt-4 flex">
         <div className="w-1/2 pr-4">
-
-          <FormGroup legendText="水印风格">
-            <RadioButtonGroup
-              name="theme"
-              valueSelected={theme}
-              onChange={(value: string) => _set('theme', value)}
-            >
-              <RadioButton
-                id="light"
-                labelText="亮色"
-                value="light"
-              />
-              <RadioButton
-                id="dark"
-                labelText="暗色"
-                value="dark"
-              />
-            </RadioButtonGroup>
-          </FormGroup>
-
-          <FormGroup legendText="标题">
-            <TextInput
-              id="title"
-              labelText=""
-              placeholder="请输入标题"
-              maxLength={32}
-              value={title}
-              onChange={(e: any) => _set('title', e.target.value)}
-            />
-          </FormGroup>
-
-          <FormGroup legendText="水印类型">
-            <RadioButtonGroup
-              name="type"
-              valueSelected={type}
-              onChange={(value: string) => _set('type', value)}
-            >
-              <RadioButton
-                id="image"
-                labelText="图片"
-                value="image"
-              />
-              <RadioButton
-                id="text"
-                labelText="文本"
-                value="text"
-              />
-            </RadioButtonGroup>
-          </FormGroup>
-          
-          <ToggleBox isOpen={type === 'image'}>
-            <FormGroup legendText="图片">
-              <FileUploaderButton
-                labelText="选择图片"
-                accept={['.jpeg', '.jpg', '.png']}
-                onChange={handleFileChange}
-              />
-              <div className="mt-2 text-xs text-gray-500 leading-relaxed">
-                仅支持 1M 以下的 .jpg 或 .png
-              </div>
-              {isLarge && (
-                <InlineNotification
-                  lowContrast
-                  title="图片过大"
-                  kind="warning"
-                  onCloseButtonClick={() => setIsLarge(false)}
-                />
-              )}
-            </FormGroup>
-          </ToggleBox>
-
-          <ToggleBox isOpen={type === 'text'}>
-            <FormGroup legendText="文本">
+          <div style={{ maxWidth: 400 }}>
+            <FormGroup legendText="标题">
               <TextInput
-                id="text"
+                id="title"
                 labelText=""
-                placeholder="请输入文本内容"
-                value={text}
-                onChange={(e: any) => _set('text', e.target.value)}
+                placeholder="请输入标题"
+                maxLength={32}
+                value={title}
+                onChange={(e: any) => _set('title', e.target.value)}
               />
             </FormGroup>
-          </ToggleBox>
 
-          <FormGroup legendText="水印位置">
-            <PositionSelector
-              selected={position}
-              onSelect={p => _set('position', p)}
-            />
-          </FormGroup>
-
-          <FormGroup legendText="位置偏移">
-            <RadioButtonGroup
-              name="watermark-offset"
-              valueSelected={offsetType}
-              onChange={(value: string) => _set('offsetType', value)}
-            >
-              <RadioButton
-                id="watermark-offset-none"
-                labelText="不偏移"
-                value="none"
-              />
-              <RadioButton
-                id="watermark-offset-pixel"
-                labelText="固定像素"
-                value="pixel"
-              />
-              <RadioButton
-                id="watermark-offset-percent"
-                labelText="相对百分比"
-                value="percent"
-              />
-            </RadioButtonGroup>
-          </FormGroup>
-
-          <ToggleBox isOpen={offsetType !== 'none'}>
-            <FormGroup legendText="横向偏移">
-              <div className="flex items-center">
-                <div className="mr-2">
-                  <NumberInput
-                    id="watermark-offset-value-x"
-                    min={-25600}
-                    max={25600}
-                    step={1}
-                    invalidText=""
-                    ref={offsetXInputRef}
-                    value={offsetType === 'pixel' ? offsetPixelX : offsetPercentX}
-                    onChange={() => {
-                      const value = Number(get(offsetXInputRef, 'current.value'))
-                      if (!isNaN(value)) {
-                        const key = offsetType === 'pixel' ? 'offsetPixelX' : 'offsetPercentX'
-                        _set(key, value)
-                      }
-                    }}
-                  />
-                </div>
-                <div className="pt-2">
-                  {offsetType === 'pixel' ? 'px' : '%'}
-                </div>
-              </div>
-            </FormGroup>
-            <FormGroup legendText="纵向偏移">
-              <div className="flex items-center">
-                <div className="mr-2">
-                  <NumberInput
-                    id="watermark-offset-value-y"
-                    min={-25600}
-                    max={25600}
-                    step={1}
-                    invalidText=""
-                    ref={offsetYInputRef}
-                    value={offsetType === 'pixel' ? offsetPixelY : offsetPercentY}
-                    onChange={() => {
-                      const value = Number(get(offsetYInputRef, 'current.value'))
-                      if (!isNaN(value)) {
-                        const key = offsetType === 'pixel' ? 'offsetPixelY' : 'offsetPercentY'
-                        _set(key, value)
-                      }
-                    }}
-                  />
-                </div>
-                <div className="pt-2">
-                  {offsetType === 'pixel' ? 'px' : '%'}
-                </div>
-              </div>
-            </FormGroup>
-          </ToggleBox>
-
-          <FormGroup legendText="水印缩放">
-            <RadioButtonGroup
-              name="watermark-scale"
-              valueSelected={scaleType}
-              onChange={(value: string) => _set('scaleType', value)}
-            >
-              <RadioButton
-                id="watermark-scale-none"
-                labelText="不缩放"
-                value="none"
-              />
-              <RadioButton
-                id="watermark-scale-pixel"
-                labelText="固定像素"
-                value="pixel"
-              />
-              <RadioButton
-                id="watermark-scale-percent"
-                labelText="相对百分比"
-                value="percent"
-              />
-            </RadioButtonGroup>
-          </FormGroup>
-
-          <ToggleBox isOpen={scaleType !== 'none'}>
-            <FormGroup legendText="缩放至">
-              <div className="flex items-center">
-                <div className="mr-2">
-                  <NumberInput
-                    id="watermark-scale-value"
-                    min={1}
-                    max={25600}
-                    step={1}
-                    invalidText=""
-                    ref={scaleInputRef}
-                    value={scaleType === 'pixel' ? scalePixel : scalePercent}
-                    onChange={() => {
-                      const value = Number(get(scaleInputRef, 'current.value'))
-                      if (!isNaN(value)) {
-                        const key = scaleType === 'pixel' ? 'scalePixel' : 'scalePercent'
-                        _set(key, value)
-                      }
-                    }}
-                  />
-                </div>
-                <div className="pt-2">
-                  {scaleType === 'pixel' ? 'px' : '%'}
-                </div>
-              </div>
-              <div className="mt-2 text-xs text-gray-500 leading-relaxed">
-                此为宽度调整，高度将按原宽高比进行相应缩放
-              </div>
-            </FormGroup>
-          </ToggleBox>
-
-          <FormGroup legendText="重复">
-            <RadioButtonGroup
-              name="watermark-repeat"
-              valueSelected={repeat}
-              onChange={(value: string) => _set('repeat', value)}
-            >
-              <RadioButton
-                id="watermark-repeat-no"
-                labelText="不重复"
-                value="no-repeat"
-              />
-              <RadioButton
-                id="watermark-repeat-x"
-                labelText="横向"
-                value="repeat-x"
-              />
-              <RadioButton
-                id="watermark-repeat-y"
-                labelText="纵向"
-                value="repeat-y"
-              />
-              <RadioButton
-                id="watermark-repeat-repeat"
-                labelText="覆盖"
-                value="repeat"
-              />
-            </RadioButtonGroup>
-          </FormGroup>
-
-          <FormGroup legendText="透明度">
-            <div className="flex items-center">
-              <div className="mr-2">
-                <Slider
-                  min={0}
-                  max={100}
-                  value={opacity}
-                  onChange={({ value }) => _set('opacity', value)}
+            <FormGroup legendText="风格">
+              <RadioButtonGroup
+                name="theme"
+                valueSelected={theme}
+                onChange={(value: string) => _set('theme', value)}
+              >
+                <RadioButton
+                  id="light"
+                  labelText="亮色"
+                  value="light"
                 />
-              </div>
-              <div className="pt-2">
-                %
-              </div>
-            </div>
-          </FormGroup>
-
-          <FormGroup legendText="旋转">
-            <div className="flex items-center">
-              <div className="mr-2">
-                <Slider
-                  min={0}
-                  max={360}
-                  value={rotate}
-                  onChange={({ value }) => _set('rotate', value)}
+                <RadioButton
+                  id="dark"
+                  labelText="暗色"
+                  value="dark"
                 />
-              </div>
-              <div className="pt-2">
-                °
-              </div>
-            </div>
-          </FormGroup>
+              </RadioButtonGroup>
+            </FormGroup>
 
+            <FormGroup legendText="类型">
+              <RadioButtonGroup
+                name="type"
+                valueSelected={type}
+                onChange={(value: string) => _set('type', value)}
+              >
+                <RadioButton
+                  id="image"
+                  labelText="图片"
+                  value="image"
+                />
+                <RadioButton
+                  id="text"
+                  labelText="文本"
+                  value="text"
+                />
+              </RadioButtonGroup>
+            </FormGroup>
+            
+            <ToggleBox isOpen={type === 'image'}>
+              <FormGroup legendText="图片">
+                <FileUploaderButton
+                  labelText="选择图片"
+                  accept={['.jpeg', '.jpg', '.png']}
+                  onChange={handleFileChange}
+                />
+                <div className="mt-2 text-xs text-gray-500 leading-relaxed">
+                  仅支持 1M 以下的 .jpg 或 .png
+                </div>
+                {isLarge && (
+                  <InlineNotification
+                    lowContrast
+                    title="图片过大"
+                    kind="warning"
+                    onCloseButtonClick={() => setIsLarge(false)}
+                  />
+                )}
+              </FormGroup>
+            </ToggleBox>
+
+            <ToggleBox isOpen={type === 'text'}>
+              <FormGroup legendText="文本">
+                <TextInput
+                  id="text"
+                  labelText=""
+                  placeholder="请输入文本内容"
+                  value={text}
+                  onChange={(e: any) => _set('text', e.target.value)}
+                />
+              </FormGroup>
+            </ToggleBox>
+
+            <FormGroup legendText="宽度">
+              <NumberInput
+                id="watermark-width-value"
+                min={1}
+                max={25600}
+                step={1}
+                invalidText=""
+                disabled={type === 'image'}
+                ref={widthInputRef}
+                value={width}
+                onChange={() => {
+                  const value = Number(get(widthInputRef, 'current.value'))
+                  if (!isNaN(value)) _set('width', value)
+                }}
+              />
+            </FormGroup>
+
+            <FormGroup legendText="高度">
+              <NumberInput
+                id="watermark-height-value"
+                min={1}
+                max={25600}
+                step={1}
+                invalidText=""
+                disabled={type === 'image'}
+                ref={heightInputRef}
+                value={height}
+                onChange={() => {
+                  const value = Number(get(heightInputRef, 'current.value'))
+                  if (!isNaN(value)) _set('width', value)
+                }}
+              />
+            </FormGroup>
+
+            <FormGroup legendText="缩放">
+              <RadioButtonGroup
+                name="watermark-scale-type"
+                valueSelected={scaleType}
+                onChange={(value: string) => _set('scaleType', value)}
+              >
+                <RadioButton
+                  id="watermark-scale-none"
+                  labelText="不缩放"
+                  value="none"
+                />
+                <RadioButton
+                  id="watermark-scale-pixel"
+                  labelText="固定像素"
+                  value="pixel"
+                />
+                <RadioButton
+                  id="watermark-scale-percent"
+                  labelText="相对百分比"
+                  value="percent"
+                />
+              </RadioButtonGroup>
+            </FormGroup>
+
+            <ToggleBox isOpen={scaleType !== 'none'}>
+              <FormGroup legendText="缩放基准">
+                <RadioButtonGroup
+                  name="watermark-scale-base"
+                  valueSelected={scaleBase}
+                  onChange={(value: string) => _set('scaleBase', value)}
+                >
+                  <RadioButton
+                    id="watermark-scale-width"
+                    labelText="宽度"
+                    value="width"
+                  />
+                  <RadioButton
+                    id="watermark-scale-height"
+                    labelText="高度"
+                    value="height"
+                  />
+                </RadioButtonGroup>
+              </FormGroup>
+              <FormGroup legendText="缩放至">
+                <div className="flex items-center">
+                  <div className="mr-2">
+                    <NumberInput
+                      id="watermark-scale-value"
+                      min={1}
+                      max={25600}
+                      step={1}
+                      invalidText=""
+                      ref={scaleInputRef}
+                      value={scaleType === 'pixel' ? scalePixel : scalePercent}
+                      onChange={() => {
+                        const value = Number(get(scaleInputRef, 'current.value'))
+                        if (!isNaN(value)) {
+                          const key = scaleType === 'pixel' ? 'scalePixel' : 'scalePercent'
+                          _set(key, value)
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="pt-2">
+                    {scaleType === 'pixel' ? 'px' : '%'}
+                  </div>
+                </div>
+              </FormGroup>
+            </ToggleBox>
+
+            <FormGroup legendText="位置">
+              <PositionSelector
+                selected={position}
+                onSelect={p => _set('position', p)}
+              />
+            </FormGroup>
+
+            <FormGroup legendText="位置偏移">
+              <RadioButtonGroup
+                name="watermark-offset"
+                valueSelected={offsetType}
+                onChange={(value: string) => _set('offsetType', value)}
+              >
+                <RadioButton
+                  id="watermark-offset-none"
+                  labelText="不偏移"
+                  value="none"
+                />
+                <RadioButton
+                  id="watermark-offset-pixel"
+                  labelText="固定像素"
+                  value="pixel"
+                />
+                <RadioButton
+                  id="watermark-offset-percent"
+                  labelText="相对百分比"
+                  value="percent"
+                />
+              </RadioButtonGroup>
+            </FormGroup>
+
+            <ToggleBox isOpen={offsetType !== 'none'}>
+              <FormGroup legendText="横向偏移">
+                <div className="flex items-center">
+                  <div className="mr-2">
+                    <NumberInput
+                      id="watermark-offset-value-x"
+                      min={-25600}
+                      max={25600}
+                      step={1}
+                      invalidText=""
+                      ref={offsetXInputRef}
+                      value={offsetType === 'pixel' ? offsetPixelX : offsetPercentX}
+                      onChange={() => {
+                        const value = Number(get(offsetXInputRef, 'current.value'))
+                        if (!isNaN(value)) {
+                          const key = offsetType === 'pixel' ? 'offsetPixelX' : 'offsetPercentX'
+                          _set(key, value)
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="pt-2">
+                    {offsetType === 'pixel' ? 'px' : '%'}
+                  </div>
+                </div>
+              </FormGroup>
+              <FormGroup legendText="纵向偏移">
+                <div className="flex items-center">
+                  <div className="mr-2">
+                    <NumberInput
+                      id="watermark-offset-value-y"
+                      min={-25600}
+                      max={25600}
+                      step={1}
+                      invalidText=""
+                      ref={offsetYInputRef}
+                      value={offsetType === 'pixel' ? offsetPixelY : offsetPercentY}
+                      onChange={() => {
+                        const value = Number(get(offsetYInputRef, 'current.value'))
+                        if (!isNaN(value)) {
+                          const key = offsetType === 'pixel' ? 'offsetPixelY' : 'offsetPercentY'
+                          _set(key, value)
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="pt-2">
+                    {offsetType === 'pixel' ? 'px' : '%'}
+                  </div>
+                </div>
+              </FormGroup>
+            </ToggleBox>
+
+            <FormGroup legendText="重复">
+              <RadioButtonGroup
+                name="watermark-repeat"
+                valueSelected={repeat}
+                onChange={(value: string) => _set('repeat', value)}
+              >
+                <RadioButton
+                  id="watermark-repeat-no"
+                  labelText="不重复"
+                  value="no-repeat"
+                />
+                <RadioButton
+                  id="watermark-repeat-x"
+                  labelText="横向"
+                  value="repeat-x"
+                />
+                <RadioButton
+                  id="watermark-repeat-y"
+                  labelText="纵向"
+                  value="repeat-y"
+                />
+                <RadioButton
+                  id="watermark-repeat-repeat"
+                  labelText="覆盖"
+                  value="repeat"
+                />
+              </RadioButtonGroup>
+            </FormGroup>
+
+            <FormGroup legendText="透明度">
+              <div className="flex items-center">
+                <div className="mr-2">
+                  <Slider
+                    min={0}
+                    max={100}
+                    value={opacity}
+                    onChange={({ value }) => _set('opacity', value)}
+                  />
+                </div>
+                <div className="pt-2">
+                  %
+                </div>
+              </div>
+            </FormGroup>
+
+            <FormGroup legendText="旋转">
+              <div className="flex items-center">
+                <div className="mr-2">
+                  <Slider
+                    min={0}
+                    max={360}
+                    value={rotate}
+                    onChange={({ value }) => _set('rotate', value)}
+                  />
+                </div>
+                <div className="pt-2">
+                  °
+                </div>
+              </div>
+            </FormGroup>
+          </div>
         </div>
         <div className="w-1/2">
           <div className="sticky" style={{ top: 48 }}>

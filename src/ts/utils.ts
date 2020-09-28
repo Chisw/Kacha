@@ -56,7 +56,6 @@ export const getImageByDataURL: (dataURL: string) => Promise<CanvasImageSource> 
 export const drawDataURL2Canvas = async (dataURL: string, canvas: HTMLCanvasElement) => {
   const ctx = canvas.getContext('2d')
   const { width, height } = canvas
-  console.log(width, height)
 
   return new Promise((resolve, reject) => {
     const svgImg = new Image()
@@ -88,6 +87,7 @@ export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number) => Prom
     width: wmWidth,
     height: wmHeight,
     scaleType,
+    scaleBase,
     scalePixel,
     scalePercent,
     opacity,
@@ -98,11 +98,22 @@ export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number) => Prom
   let height = 32
   if (type === 'image') {
     if (scaleType === 'pixel') {
-      width = scalePixel
-      height = wmHeight * (width / wmWidth)
+      if (scaleBase === 'width') {
+        width = scalePixel
+        height = wmHeight * (width / wmWidth)
+      } else {
+        height = scalePixel
+        width = wmWidth * (height / wmHeight)
+      }
     } else if (scaleType === 'percent') {
-      width = outerWidth * (scalePercent / 100)
-      height = wmHeight * (width / wmWidth)
+      const ratio = scalePercent / 100
+      if (scaleBase === 'width') {
+        width = outerWidth * ratio
+        height = wmHeight * (width / wmWidth)
+      } else {
+        height = outerHeight * ratio
+        width = wmWidth * (height / wmHeight)
+      }
     } else {
       width = wmWidth || PREVIEW_WIDTH_SM
       height = wmHeight || PREVIEW_HEIGHT_SM

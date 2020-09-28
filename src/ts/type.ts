@@ -2,6 +2,7 @@ export type WatermarkType = 'image' | 'text'
 export type ThemeType = 'dark' | 'light'
 export type FormatType = 'origin' | 'jpeg' | 'png' | 'webp'
 export type SizeChangeType = 'none' | 'pixel' | 'percent'
+export type ScaleBaseType = 'width' | 'height'
 export type RepeatType = 'no-repeat' | 'repeat-x' | 'repeat-y' | 'repeat'
 export type PositionType =
   'left-top' | 'center-top' | 'right-top' |
@@ -20,16 +21,17 @@ export interface IExportSettingg {
 export interface IWatermark {
   id: string
   title: string
-  type: WatermarkType
   theme: ThemeType
+  type: WatermarkType
   dataURL: string
   text: string
   width: number
   height: number
-  position: PositionType
   scaleType: SizeChangeType
+  scaleBase: ScaleBaseType
   scalePixel: number
   scalePercent: number
+  position: PositionType
   offsetType: SizeChangeType
   offsetPixelX: number
   offsetPixelY: number
@@ -38,6 +40,8 @@ export interface IWatermark {
   repeat: RepeatType
   opacity: number
   rotate: number
-  font?: string
+  fontSize: number
+  fontFamily: string
+  textColor: string
   exportSetting?: IExportSettingg
 }
