@@ -4,6 +4,7 @@ export type FormatType = 'origin' | 'jpeg' | 'png' | 'webp'
 export type SizeChangeType = 'none' | 'pixel' | 'percent'
 export type ScaleBaseType = 'width' | 'height'
 export type RepeatType = 'no-repeat' | 'repeat-x' | 'repeat-y' | 'repeat'
+export type AlignType = 'flex-start' | 'center' | 'flex-end'
 export type PositionType =
   'left-top' | 'center-top' | 'right-top' |
   'center-left' | 'center-center' | 'center-right' |
@@ -42,16 +43,15 @@ export interface IWatermark {
   opacity: number
   rotate: number
   fontSize: number
+  fontColor: string
   fontFamily: string
-  textColor: string
+  fontAlignX: AlignType
+  fontAlignY: AlignType
   exportSetting: IExportSettingg
 }
 
-export interface IWatermarkImageMeta {
-  dataURL: string
-  width: number
-  height: number
-  opacity: number
-  rotate: number
-  showOutline: boolean
+export interface IWatermarkMeta {
+  watermark: IWatermark
+  metaWidth: number
+  metaHeight: number
 }

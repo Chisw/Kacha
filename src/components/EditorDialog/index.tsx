@@ -5,6 +5,7 @@ import ExportSetting from './ExportSetting'
 import { IWatermark } from '../../ts/type'
 import { getShortId } from '../../ts/utils'
 import Local from '../../ts/local'
+import { EMPTY_WATERMARK } from '../../ts/constant'
 
 interface EditorDialogProps {
   open: boolean
@@ -23,13 +24,11 @@ export default function EditorDialog(props: EditorDialogProps) {
   } = props
 
   const [tabIndex, setTabIndex] = useState(0)
-  const [watermarkCache, setWatermarkCache] = useState<IWatermark>()
+  const [watermarkCache, setWatermarkCache] = useState<IWatermark>(EMPTY_WATERMARK)
   const [submitting, setSubmitting] = useState(false)
   
   useEffect(() => {
-    if (watermark) {
-      setWatermarkCache(Object.assign({}, watermark))
-    }
+    watermark && setWatermarkCache(Object.assign({}, watermark))
   }, [watermark])
 
   useEffect(() => {
@@ -37,6 +36,8 @@ export default function EditorDialog(props: EditorDialogProps) {
       setTabIndex(0)
       const wrapper = document.querySelector('.editor-dialog .bx--modal-content')
       wrapper && wrapper.scrollTo({ top: 0 })
+    } else {
+      setWatermarkCache(EMPTY_WATERMARK)
     }
   }, [open])
 
@@ -63,8 +64,6 @@ export default function EditorDialog(props: EditorDialogProps) {
     onClose()
     setSubmitting(false)
   }, [watermarkCache, onClose, setWatermarkList])
-
-  if (!watermarkCache) return <></>
 
   return (
     <>

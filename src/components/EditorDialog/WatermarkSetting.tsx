@@ -40,6 +40,11 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     repeat,
     opacity,
     rotate,
+    fontSize,
+    fontColor,
+    fontFamily,
+    fontAlignX,
+    fontAlignY,
   } = watermark
 
   const widthInputRef = useRef<any>(null)
@@ -47,8 +52,10 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
   const scaleInputRef = useRef<any>(null)
   const offsetXInputRef = useRef<any>(null)
   const offsetYInputRef = useRef<any>(null)
+  const fontSizeInputRef = useRef<any>(null)
 
-  const [isLarge, setIsLarge] = useState(false)
+  const [isImgLarge, setIsImgLarge] = useState(false)
+  const [timestamp, setTimestamp] = useState(Date.now())
 
   const _set = useCallback((key: string, value: any) => {
     setWatermark(Object.assign({}, watermark, { [key]: value }))
@@ -73,13 +80,21 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
       if (file.size < 1024 * 1024) {
         const { dataURL, width, height } = await getDataByFile(file)
         setWatermark(Object.assign({}, watermark, { dataURL, width, height }))
-        setIsLarge(false)
+        setIsImgLarge(false)
       } else {
         setWatermark(Object.assign({}, watermark, { dataURL: '', width: 0, height: 0 }))
-        setIsLarge(true)
+        setIsImgLarge(true)
       }
     }
   }, [getDataByFile, watermark, setWatermark])
+
+  const handleColorChange = useCallback((e: any) => {
+    const now = Date.now()
+    if (now - timestamp > 500) {
+      _set('fontColor', e.target.value)
+      setTimestamp(now)
+    }
+  }, [_set, timestamp])
 
   return (
     <>
@@ -119,6 +134,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
             <FormGroup legendText="预览轮廓线">
               <Checkbox
                 id="show-outline"
+                name="show-outline"
                 labelText="显示水印占据的空间轮廓虚线"
                 checked={showOutline}
                 onChange={(checked) => _set('showOutline', checked)}
@@ -157,18 +173,18 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                 <div className="mt-2 text-xs text-gray-500 leading-relaxed">
                   仅支持 1M 以下的 .jpg 或 .png
                 </div>
-                {isLarge && (
+                {isImgLarge && (
                   <InlineNotification
                     lowContrast
                     title="图片过大"
                     kind="warning"
-                    onCloseButtonClick={() => setIsLarge(false)}
+                    onCloseButtonClick={() => setIsImgLarge(false)}
                   />
                 )}
               </FormGroup>
             </ToggleBox>
 
-            <ToggleBox isOpen={type === 'text'}>
+            <ToggleBox isOpen={type === 'text'} maxHeight={800}>
               <FormGroup legendText="文本">
                 <TextInput
                   id="text"
@@ -178,40 +194,131 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                   onChange={(e: any) => _set('text', e.target.value)}
                 />
               </FormGroup>
+              <FormGroup legendText="字体大小">
+                <div className="flex items-center">
+                  <div className="mr-2">
+                    <NumberInput
+                      id="watermark-font-size"
+                      min={0}
+                      max={500}
+                      step={1}
+                      invalidText=""
+                      ref={fontSizeInputRef}
+                      value={fontSize}
+                      onChange={() => {
+                        const value = Number(get(fontSizeInputRef, 'current.value'))
+                        if (!isNaN(value)) _set('fontSize', value)
+                      }}
+                    />
+                  </div>
+                  <div className="pt-2">px</div>
+                </div>
+              </FormGroup>
+              <FormGroup legendText="字体颜色">
+                <div className="flex items-center">
+                  <input
+                    type="color"
+                    id="font-color"
+                    name="font-color"
+                    value={fontColor || '#000000'}
+                    onChange={handleColorChange}
+                  >
+                  </input>
+                  <span className="ml-2">
+                    {fontColor || '#000000'}
+                  </span>
+                </div>
+              </FormGroup>
+              <FormGroup legendText="字体水平对齐">
+                <RadioButtonGroup
+                  name="fontAlignX"
+                  valueSelected={fontAlignX}
+                  onChange={(value: string) => _set('fontAlignX', value)}
+                >
+                  <RadioButton
+                    id="align-x-flex-start"
+                    labelText="居左"
+                    value="flex-start"
+                  />
+                  <RadioButton
+                    id="align-x-center"
+                    labelText="居中"
+                    value="center"
+                  />
+                  <RadioButton
+                    id="align-x-flex-end"
+                    labelText="居右"
+                    value="flex-end"
+                  />
+                </RadioButtonGroup>
+              </FormGroup>
+              <FormGroup legendText="字体垂直对齐">
+                <RadioButtonGroup
+                  name="fontAlignY"
+                  valueSelected={fontAlignY}
+                  onChange={(value: string) => _set('fontAlignY', value)}
+                >
+                  <RadioButton
+                    id="align-y-flex-start"
+                    labelText="居顶"
+                    value="flex-start"
+                  />
+                  <RadioButton
+                    id="align-y-center"
+                    labelText="居中"
+                    value="center"
+                  />
+                  <RadioButton
+                    id="align-y-flex-end"
+                    labelText="居底"
+                    value="flex-end"
+                  />
+                </RadioButtonGroup>
+              </FormGroup>
             </ToggleBox>
 
             <FormGroup legendText="宽度">
-              <NumberInput
-                id="watermark-width-value"
-                min={1}
-                max={25600}
-                step={1}
-                invalidText=""
-                disabled={type === 'image'}
-                ref={widthInputRef}
-                value={width}
-                onChange={() => {
-                  const value = Number(get(widthInputRef, 'current.value'))
-                  if (!isNaN(value)) _set('width', value)
-                }}
-              />
+              <div className="flex items-center">
+                <div className="mr-2">
+                  <NumberInput
+                    id="watermark-width-value"
+                    min={1}
+                    max={25600}
+                    step={1}
+                    invalidText=""
+                    disabled={type === 'image'}
+                    ref={widthInputRef}
+                    value={width}
+                    onChange={() => {
+                      const value = Number(get(widthInputRef, 'current.value'))
+                      if (!isNaN(value)) _set('width', value)
+                    }}
+                  />
+                </div>
+                <div className="pt-2">px</div>
+              </div>
             </FormGroup>
 
             <FormGroup legendText="高度">
-              <NumberInput
-                id="watermark-height-value"
-                min={1}
-                max={25600}
-                step={1}
-                invalidText=""
-                disabled={type === 'image'}
-                ref={heightInputRef}
-                value={height}
-                onChange={() => {
-                  const value = Number(get(heightInputRef, 'current.value'))
-                  if (!isNaN(value)) _set('width', value)
-                }}
-              />
+              <div className="flex items-center">
+                <div className="mr-2">
+                  <NumberInput
+                    id="watermark-height-value"
+                    min={1}
+                    max={25600}
+                    step={1}
+                    invalidText=""
+                    disabled={type === 'image'}
+                    ref={heightInputRef}
+                    value={height}
+                    onChange={() => {
+                      const value = Number(get(heightInputRef, 'current.value'))
+                      if (!isNaN(value)) _set('height', value)
+                    }}
+                  />
+                </div>
+                <div className="pt-2">px</div>
+              </div>
             </FormGroup>
 
             <FormGroup legendText="缩放">

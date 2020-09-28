@@ -15,14 +15,14 @@ import InputDialog from './InputDialog'
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-300 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
 interface WatermarkListProps {
-  setActiveId: (id: string) => void
+  setActiveWatermark: (watermark: IWatermark) => void
 }
 
 type operateType = 'copy' | 'delete'
 
 export default function WatermarkList(props: WatermarkListProps) {
   const {
-    setActiveId,
+    setActiveWatermark,
   } = props
 
   const [loaded, setLoaded] = useState(false)
@@ -99,7 +99,7 @@ export default function WatermarkList(props: WatermarkListProps) {
                 <div className="absolute inset-0 opacity-0 hover:opacity-100 flex flex-col bg-black-800 bg-hazy-50 transition-all duration-200 border border-solid border-gray-800">
                   <div
                     className={`flex-grow ${HOVER_CLASS} text-white text-sm border-b border-solid border-gray-800`}
-                    onClick={() => setActiveId(id)}
+                    onClick={() => setActiveWatermark(watermark)}
                   >
                     <span className="flex items-center">
                       <Icons.Tick size={20} />

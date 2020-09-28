@@ -1,4 +1,4 @@
-import { IWatermark, IWatermarkImageMeta } from './type'
+import { IWatermark, IWatermarkMeta } from './type'
 import { isString } from 'lodash'
 import { PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM } from './constant'
 
@@ -37,6 +37,57 @@ export const getBytesSize = (bytes: number, unit?: 'B' | 'KB' | 'MB' | 'GB') => 
   return result
 }
 
+export const HEX2RGB = (hex: string) => {
+  let color = hex.toLowerCase()
+  const reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/
+  if (color && reg.test(color)) {
+    if (color.length === 4) {
+      let colorNew = '#'
+      for (let i = 1; i < 4; i += 1) {
+        colorNew += color.slice(i, i + 1).concat(color.slice(i, i + 1))
+      }
+      color = colorNew
+    }
+    const colorChange = []
+    for (let i = 1; i < 7; i += 2) {
+      colorChange.push(parseInt('0x' + color.slice(i, i + 2)))
+    }
+    return `rgb(${colorChange.join(',')})`
+  }
+  return color
+}
+
+export const RGB2HEX = (rgb: string) => {
+  const reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/
+  if (/^(rgb|RGB)/.test(rgb)) {
+    const aColor = rgb.replace(/(?:\(|\)|rgb|RGB)*/g, '').split(',')
+    let strHex = '#'
+    for (let i = 0; i < aColor.length; i++) {
+      let hex = Number(aColor[i]).toString(16)
+      if (hex.length < 2) {
+        hex = '0' + hex
+      }
+      strHex += hex
+    }
+    if (strHex.length !== 7) {
+      strHex = rgb
+    }
+    return strHex
+  } else if (reg.test(rgb)) {
+    const aNum = rgb.replace(/#/, "").split("")
+    if (aNum.length === 6) {
+      return rgb
+    } else if (aNum.length === 3) {
+      let numHex = '#'
+      for (let i = 0; i < aNum.length; i += 1) {
+        numHex += (aNum[i] + aNum[i])
+      }
+      return numHex
+    }
+  }
+  return rgb
+}
+
 export const isWatermark = (obj: any) => {
   return isString(obj.id)
     && isString(obj.title)
@@ -53,10 +104,26 @@ export const getImageByDataURL: (dataURL: string) => Promise<CanvasImageSource> 
   })
 }
 
-export const drawImageMeta2Canvas = async (meta: IWatermarkImageMeta, canvas: HTMLCanvasElement, isPreview: boolean) => {
+export const drawMeta2Canvas = async (meta: IWatermarkMeta, canvas: HTMLCanvasElement, isPreview: boolean) => {
   const ctx = canvas.getContext('2d')
   const { width, height } = canvas
-  const { dataURL, width: imgWidth, height: imgHeight, opacity, rotate, showOutline } = meta
+  const {
+    watermark: {
+      showOutline,
+      type,
+      opacity,
+      rotate,
+      dataURL,
+      text,
+      fontSize,
+      fontColor,
+      fontFamily,
+      fontAlignX,
+      fontAlignY,
+    },
+    metaWidth,
+    metaHeight,
+  } = meta
 
   return new Promise((resolve, reject) => {
     const svgImg = new Image()
@@ -85,21 +152,41 @@ export const drawImageMeta2Canvas = async (meta: IWatermarkImageMeta, canvas: HT
                 align-items: center;
                 width: ${width}px;
                 height: ${height}px;
-                font-size:0;
               "
             >
-              <img
-                src="${dataURL}"
-                style="
-                  display: block;
-                  width: ${imgWidth}px;
-                  height: ${imgHeight}px;
-                  opacity: ${opacity/100};
-                  transform-origin: center;
-                  transform: rotate(${rotate}deg);
-                "
-              />
-              ${(isPreview && showOutline) ? (`
+              ${type === 'image' ? `
+                <img
+                  src="${dataURL}"
+                  style="
+                    display: block;
+                    width: ${metaWidth}px;
+                    height: ${metaHeight}px;
+                    opacity: ${opacity / 100};
+                    transform-origin: center;
+                    transform: rotate(${rotate}deg);
+                  "
+                />
+              ` : `
+                <div
+                  style="
+                    display: flex;
+                    justify-content: ${fontAlignX};
+                    align-items: ${fontAlignY};
+                    font-size: ${fontSize}px;
+                    color: ${HEX2RGB(fontColor)};
+                    font-family: ${fontFamily};
+                    width: ${metaWidth}px;
+                    height: ${metaHeight}px;
+                    opacity: ${opacity / 100};
+                    transform-origin: center;
+                    transform: rotate(${rotate}deg);
+                  "
+                >
+                  ${text}
+                </div>
+              `}
+
+              ${(isPreview && showOutline) ? `
                 <div
                   style="
                     position: absolute;
@@ -111,7 +198,7 @@ export const drawImageMeta2Canvas = async (meta: IWatermarkImageMeta, canvas: HT
                   "
                 >
                 </div>
-              `) : ''}
+              ` : ''}
             </div>
           </body>
         </foreignObject>
@@ -121,12 +208,8 @@ export const drawImageMeta2Canvas = async (meta: IWatermarkImageMeta, canvas: HT
 
 export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number, is: boolean) => Promise<string> = async (watermark, outerWidth, outerHeight, isPreview) => {
   const {
-    type,
-    showOutline,
-    text,
-    dataURL,
-    width: wmWidth,
-    height: wmHeight,
+    width,
+    height,
     scaleType,
     scaleBase,
     scalePixel,
@@ -136,34 +219,30 @@ export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number, is: boo
     offsetPixelY,
     offsetPercentX,
     offsetPercentY,
-    opacity,
-    rotate,
   } = watermark
 
-  let width = 200
-  let height = 32
-  if (type === 'image') {
-    if (scaleType === 'pixel') {
-      if (scaleBase === 'width') {
-        width = scalePixel
-        height = wmHeight * (width / wmWidth)
-      } else {
-        height = scalePixel
-        width = wmWidth * (height / wmHeight)
-      }
-    } else if (scaleType === 'percent') {
-      const ratio = scalePercent / 100
-      if (scaleBase === 'width') {
-        width = outerWidth * ratio
-        height = wmHeight * (width / wmWidth)
-      } else {
-        height = outerHeight * ratio
-        width = wmWidth * (height / wmHeight)
-      }
+  let metaWidth = 0
+  let metaHeight = 0
+  if (scaleType === 'pixel') {
+    if (scaleBase === 'width') {
+      metaWidth = scalePixel
+      metaHeight = height * (metaWidth / width)
     } else {
-      width = wmWidth || PREVIEW_WIDTH_SM
-      height = wmHeight || PREVIEW_HEIGHT_SM
+      metaHeight = scalePixel
+      metaWidth = width * (metaHeight / height)
     }
+  } else if (scaleType === 'percent') {
+    const ratio = scalePercent / 100
+    if (scaleBase === 'width') {
+      metaWidth = outerWidth * ratio
+      metaHeight = height * (metaWidth / width)
+    } else {
+      metaHeight = outerHeight * ratio
+      metaWidth = width * (metaHeight / height)
+    }
+  } else {
+    metaWidth = width || PREVIEW_WIDTH_SM
+    metaHeight = height || PREVIEW_HEIGHT_SM
   }
 
   let offsetX = 0
@@ -176,25 +255,19 @@ export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number, is: boo
     offsetY = outerHeight * (offsetPercentY / 100)
   }
 
-  const canvasWidth = width + offsetX * 2
-  const canvasHeight = height + offsetY * 2
+  const canvasWidth = metaWidth + offsetX * 2
+  const canvasHeight = metaHeight + offsetY * 2
 
   const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
   canvas.width = canvasWidth
   canvas.height = canvasHeight
 
-  if (type === 'image') {
-    if (dataURL) {
-      await drawImageMeta2Canvas({ dataURL, width, height, opacity, rotate, showOutline }, canvas, isPreview)
-    }
-  } else if (type === 'text') {
-    ctx!.fillStyle = '#f00'
-    ctx!.textAlign = 'left'
-    ctx!.fillStyle = '32px monospace'
-    ctx!.fillText(text, 0, 32)
+  const meta = {
+    watermark,
+    metaWidth,
+    metaHeight,
   }
-  
+  await drawMeta2Canvas(meta, canvas, isPreview)
   return canvas.toDataURL('image/png')
 }
 
