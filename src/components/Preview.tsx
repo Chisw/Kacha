@@ -30,11 +30,11 @@ export default function Preview(props: PreviewProps) {
 
     const ctx = canvas.getContext('2d')
 
-    const bgImg = await getImageByDataURL(watermark.theme === 'dark' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK)
+    const bgImg = await getImageByDataURL(watermark.theme === 'light' ? BG_GRID_DATA_LIGHT : BG_GRID_DATA_DARK)
     ctx!.fillStyle = ctx!.createPattern(bgImg, 'repeat') as CanvasPattern
     ctx!.fillRect(0, 0, width, height)
 
-    await drawWatermark2Canvas(watermark, canvas)
+    await drawWatermark2Canvas(watermark, canvas, true)
 
     return canvas.toDataURL('image/png')
   }, [resizable, selectedIndex, watermark])

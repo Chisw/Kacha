@@ -22,6 +22,7 @@ export interface IWatermark {
   id: string
   title: string
   theme: ThemeType
+  showOutline: boolean
   type: WatermarkType
   dataURL: string
   text: string
@@ -43,5 +44,14 @@ export interface IWatermark {
   fontSize: number
   fontFamily: string
   textColor: string
-  exportSetting?: IExportSettingg
+  exportSetting: IExportSettingg
+}
+
+export interface IWatermarkImageMeta {
+  dataURL: string
+  width: number
+  height: number
+  opacity: number
+  rotate: number
+  showOutline: boolean
 }

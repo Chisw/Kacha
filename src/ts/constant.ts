@@ -9,7 +9,8 @@ export const PREVIEW_HEIGHT_SM = 160
 export const EMPTY_WATERMARK: IWatermark = {
   id: '',
   title: '',
-  theme: 'light',
+  theme: 'dark',
+  showOutline: false,
   type: 'image',
   dataURL: '',
   text: '',
@@ -45,7 +46,8 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
   {
     id: 'test01',
     title: 'kacha',
-    theme: 'light',
+    theme: 'dark',
+    showOutline: false,
     type: 'text',
     dataURL: '',
     text: 'Kacha',
@@ -79,7 +81,8 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
   {
     id: 'test02',
     title: 'test',
-    theme: 'dark',
+    theme: 'light',
+    showOutline: false,
     type: 'text',
     dataURL: '',
     text: '尚在开发中',

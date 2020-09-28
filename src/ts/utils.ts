@@ -1,4 +1,4 @@
-import { IWatermark } from './type'
+import { IWatermark, IWatermarkImageMeta } from './type'
 import { isString } from 'lodash'
 import { PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM } from './constant'
 
@@ -53,9 +53,10 @@ export const getImageByDataURL: (dataURL: string) => Promise<CanvasImageSource> 
   })
 }
 
-export const drawDataURL2Canvas = async (dataURL: string, canvas: HTMLCanvasElement) => {
+export const drawImageMeta2Canvas = async (meta: IWatermarkImageMeta, canvas: HTMLCanvasElement, isPreview: boolean) => {
   const ctx = canvas.getContext('2d')
   const { width, height } = canvas
+  const { dataURL, width: imgWidth, height: imgHeight, opacity, rotate, showOutline } = meta
 
   return new Promise((resolve, reject) => {
     const svgImg = new Image()
@@ -68,10 +69,49 @@ export const drawDataURL2Canvas = async (dataURL: string, canvas: HTMLCanvasElem
     svgImg.onerror = reject
     svgImg.src = `data:image/svg+xml;charset=utf-8,
       <svg xmlns="http://www.w3.org/2000/svg">
-        <foreignObject width="${width}" height="${height}">
-          <body xmlns="http://www.w3.org/1999/xhtml" style="margin:0; padding:0;" >
-            <div style="width:${width}px; height:${height}px; font-size:0;">
-              <img src="${dataURL}" style="display:block; width:${width}px; height:${height}px;" />
+        <foreignObject
+          width="${width}"
+          height="${height}"
+        >
+          <body
+            xmlns="http://www.w3.org/1999/xhtml"
+            style="margin: 0; padding: 0;"
+          >
+            <div
+              style="
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: ${width}px;
+                height: ${height}px;
+                font-size:0;
+              "
+            >
+              <img
+                src="${dataURL}"
+                style="
+                  display: block;
+                  width: ${imgWidth}px;
+                  height: ${imgHeight}px;
+                  opacity: ${opacity/100};
+                  transform-origin: center;
+                  transform: rotate(${rotate}deg);
+                "
+              />
+              ${(isPreview && showOutline) ? (`
+                <div
+                  style="
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    border: 1px dashed aqua;
+                  "
+                >
+                </div>
+              `) : ''}
             </div>
           </body>
         </foreignObject>
@@ -79,9 +119,10 @@ export const drawDataURL2Canvas = async (dataURL: string, canvas: HTMLCanvasElem
   })
 }
 
-export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number) => Promise<string> = async (watermark, outerWidth, outerHeight) => {
+export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number, is: boolean) => Promise<string> = async (watermark, outerWidth, outerHeight, isPreview) => {
   const {
     type,
+    showOutline,
     text,
     dataURL,
     width: wmWidth,
@@ -90,6 +131,11 @@ export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number) => Prom
     scaleBase,
     scalePixel,
     scalePercent,
+    offsetType,
+    offsetPixelX,
+    offsetPixelY,
+    offsetPercentX,
+    offsetPercentY,
     opacity,
     rotate,
   } = watermark
@@ -120,22 +166,27 @@ export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number) => Prom
     }
   }
 
+  let offsetX = 0
+  let offsetY = 0
+  if (offsetType === 'pixel') {
+    offsetX = offsetPixelX
+    offsetY = offsetPixelY
+  } else if (offsetType === 'percent') {
+    offsetX = outerWidth * (offsetPercentX / 100)
+    offsetY = outerHeight * (offsetPercentY / 100)
+  }
+
+  const canvasWidth = width + offsetX * 2
+  const canvasHeight = height + offsetY * 2
+
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
-  canvas.width = width
-  canvas.height = height
-  const center = {
-    x: width / 2,
-    y: height / 2,
-  }
-  ctx!.globalAlpha = opacity / 100
-  ctx!.translate(center.x, center.y)
-  ctx!.rotate(rotate * Math.PI / 180)
-  ctx!.translate(-center.x, -center.y)
+  canvas.width = canvasWidth
+  canvas.height = canvasHeight
 
   if (type === 'image') {
     if (dataURL) {
-      await drawDataURL2Canvas(dataURL, canvas)
+      await drawImageMeta2Canvas({ dataURL, width, height, opacity, rotate, showOutline }, canvas, isPreview)
     }
   } else if (type === 'text') {
     ctx!.fillStyle = '#f00'
@@ -147,12 +198,12 @@ export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number) => Prom
   return canvas.toDataURL('image/png')
 }
 
-export const drawWatermark2Canvas = async (watermark: IWatermark, canvas: HTMLCanvasElement) => {
+export const drawWatermark2Canvas = async (watermark: IWatermark, canvas: HTMLCanvasElement, isPreview: boolean) => {
 
   const ctx = canvas.getContext('2d')
   const { width, height } = canvas
 
-  const dataURL = await getWatermarkDataURL(watermark, width, height)
+  const dataURL = await getWatermarkDataURL(watermark, width, height, isPreview)
   const { position, repeat } = watermark
   const [x, y] = position.split('-')
 
@@ -167,16 +218,22 @@ export const drawWatermark2Canvas = async (watermark: IWatermark, canvas: HTMLCa
     svgImg.onerror = reject
     svgImg.src = `data:image/svg+xml;charset=utf-8,
       <svg xmlns="http://www.w3.org/2000/svg">
-        <foreignObject width="${width}" height="${height}">
-          <body xmlns="http://www.w3.org/1999/xhtml" style="margin:0; padding:0;" >
+        <foreignObject
+          width="${width}"
+          height="${height}"
+        >
+          <body
+            xmlns="http://www.w3.org/1999/xhtml"
+            style="margin: 0; padding: 0;"
+          >
             <div
               style="
-                width:${width}px;
-                height:${height}px;
-                background-image:url(${dataURL});
-                background-position-x:${x};
-                background-position-y:${y};
-                background-repeat:${repeat};
+                width: ${width}px;
+                height: ${height}px;
+                background-image: url(${dataURL});
+                background-position-x: ${x};
+                background-position-y: ${y};
+                background-repeat: ${repeat};
               "
             ></div>
           </body>

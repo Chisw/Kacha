@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react'
 import { IWatermark } from '../../ts/type'
-import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput, Slider, InlineNotification } from 'carbon-components-react'
+import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput, Slider, InlineNotification, Checkbox } from 'carbon-components-react'
 import { FileUploaderButton} from 'carbon-components-react'
 import ToggleBox from '../ToggleBox'
 import { get } from 'lodash'
@@ -22,6 +22,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
   const {
     title,
     theme,
+    showOutline,
     type,
     text,
     width,
@@ -96,23 +97,35 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               />
             </FormGroup>
 
-            <FormGroup legendText="风格">
+            <FormGroup legendText="预览背景风格">
               <RadioButtonGroup
                 name="theme"
                 valueSelected={theme}
                 onChange={(value: string) => _set('theme', value)}
               >
                 <RadioButton
-                  id="light"
-                  labelText="亮色"
-                  value="light"
-                />
-                <RadioButton
                   id="dark"
-                  labelText="暗色"
+                  labelText="深色"
                   value="dark"
                 />
+                <RadioButton
+                  id="light"
+                  labelText="浅色"
+                  value="light"
+                />
               </RadioButtonGroup>
+            </FormGroup>
+
+            <FormGroup legendText="预览轮廓线">
+              <Checkbox
+                id="show-outline"
+                labelText="显示水印占据的空间轮廓虚线"
+                checked={showOutline}
+                onChange={(checked) => _set('showOutline', checked)}
+              />
+              <div className="mt-2 text-xs text-gray-500 leading-relaxed">
+                仅供辅助参考，在输出时不会显示
+              </div>
             </FormGroup>
 
             <FormGroup legendText="类型">
@@ -303,7 +316,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
             </FormGroup>
 
             <ToggleBox isOpen={offsetType !== 'none'}>
-              <FormGroup legendText="横向偏移">
+              <FormGroup legendText="水平偏移">
                 <div className="flex items-center">
                   <div className="mr-2">
                     <NumberInput
@@ -328,7 +341,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                   </div>
                 </div>
               </FormGroup>
-              <FormGroup legendText="纵向偏移">
+              <FormGroup legendText="垂直偏移">
                 <div className="flex items-center">
                   <div className="mr-2">
                     <NumberInput
