@@ -6,6 +6,7 @@ import ToggleBox from '../ToggleBox'
 import { get } from 'lodash'
 import Preview from '../Preview'
 import { getImageByDataURL } from '../../ts/utils'
+import PositionSelector from './PositionSelector'
 import {
   AlignHorizontalLeft16,
   AlignHorizontalCenter16,
@@ -43,11 +44,11 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     scalePixel,
     scalePercent,
     position,
-    offsetType,
-    offsetPixelX,
-    offsetPixelY,
-    offsetPercentX,
-    offsetPercentY,
+    paddingType,
+    paddingPixelX,
+    paddingPixelY,
+    paddingPercentX,
+    paddingPercentY,
     repeat,
     opacity,
     rotate,
@@ -81,6 +82,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     }[align] as { key: 'fontAlignX' | 'fontAlignY', icons: CarbonIconType[]}
     return {
       hasIconOnly: true,
+      iconDescription: ' ',
       size: 'small',
       kind: (align === 'X' ? fontAlignX : fontAlignY) === alignType ? 'primary' : 'secondary',
       renderIcon: icons[['flex-start', 'center', 'flex-end'].indexOf(alignType)],
@@ -128,11 +130,12 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
       <div className="mt-4 flex">
         <div className="w-1/2 pr-4">
           <div style={{ maxWidth: 480 }}>
-            <FormGroup legendText="标题">
+
+            <FormGroup legendText="水印标题">
               <TextInput
                 id="title"
                 labelText=""
-                placeholder="请输入标题"
+                placeholder="给水印起个名字吧"
                 maxLength={32}
                 value={title}
                 onChange={(e: any) => _set('title', e.target.value)}
@@ -166,12 +169,142 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                 checked={showOutline}
                 onChange={(checked) => _set('showOutline', checked)}
               />
-              <div className="mt-2 text-xs text-gray-500 leading-relaxed">
+              <div className="mt-1 text-xs text-gray-500 leading-relaxed">
                 仅供辅助参考，在输出时不会显示
               </div>
             </FormGroup>
 
-            <FormGroup legendText="类型">
+            <FormGroup legendText="区域宽、高">
+              <div className="flex items-center">
+                <div className="flex items-center mr-8">
+                  <div>宽</div>
+                  <div className="mx-2">
+                    <NumberInput
+                      id="watermark-width-value"
+                      min={1}
+                      max={25600}
+                      step={1}
+                      invalidText=""
+                      disabled={type === 'image'}
+                      ref={widthInputRef}
+                      value={width}
+                      onChange={() => {
+                        const value = Number(get(widthInputRef, 'current.value'))
+                        if (!isNaN(value)) _set('width', value)
+                      }}
+                    />
+                  </div>
+                  <div>px</div>
+                </div>
+                <div className="flex items-center">
+                  <div>高</div>
+                  <div className="mr-2">
+                    <NumberInput
+                      id="watermark-height-value"
+                      min={1}
+                      max={25600}
+                      step={1}
+                      invalidText=""
+                      disabled={type === 'image'}
+                      ref={heightInputRef}
+                      value={height}
+                      onChange={() => {
+                        const value = Number(get(heightInputRef, 'current.value'))
+                        if (!isNaN(value)) _set('height', value)
+                      }}
+                    />
+                  </div>
+                  <div>px</div>
+                </div>
+              </div>
+              <div className="mt-1 text-xs text-gray-500 leading-relaxed">
+                当类型为图片时，区域宽高默认为图片宽高，如想调整大小，请使用下方缩放功能
+              </div>
+            </FormGroup>
+
+            <FormGroup legendText="区域位置">
+              <PositionSelector
+                selected={position}
+                onSelect={p => _set('position', p)}
+              />
+            </FormGroup>
+
+            <FormGroup legendText="区域填充">
+              <RadioButtonGroup
+                name="watermark-offset"
+                valueSelected={paddingType}
+                onChange={(value: string) => _set('paddingType', value)}
+              >
+                <RadioButton
+                  id="watermark-offset-none"
+                  labelText="不填充"
+                  value="none"
+                />
+                <RadioButton
+                  id="watermark-offset-pixel"
+                  labelText="固定像素"
+                  value="pixel"
+                />
+                <RadioButton
+                  id="watermark-offset-percent"
+                  labelText="相对百分比"
+                  value="percent"
+                />
+              </RadioButtonGroup>
+            </FormGroup>
+
+            <ToggleBox isOpen={paddingType !== 'none'}>
+              <FormGroup legendText="填充大小">
+                <div className="flex items-center">
+                  <div className="flex items-center mr-8">
+                    <div>水平</div>
+                    <div className="mx-2">
+                      <NumberInput
+                        id="watermark-offset-value-x"
+                        min={-25600}
+                        max={25600}
+                        step={1}
+                        invalidText=""
+                        ref={offsetXInputRef}
+                        value={paddingType === 'pixel' ? paddingPixelX : paddingPercentX}
+                        onChange={() => {
+                          const value = Number(get(offsetXInputRef, 'current.value'))
+                          if (!isNaN(value)) {
+                            const key = paddingType === 'pixel' ? 'paddingPixelX' : 'paddingPercentX'
+                            _set(key, value)
+                          }
+                        }}
+                      />
+                    </div>
+                    <div>{paddingType === 'pixel' ? 'px' : '%'}</div>
+                  </div>
+                  <div className="flex items-center">
+                    <div>垂直</div>
+                    <div className="mx-2">
+                      <NumberInput
+                        id="watermark-offset-value-y"
+                        min={-25600}
+                        max={25600}
+                        step={1}
+                        invalidText=""
+                        ref={offsetYInputRef}
+                        value={paddingType === 'pixel' ? paddingPixelY : paddingPercentY}
+                        onChange={() => {
+                          const value = Number(get(offsetYInputRef, 'current.value'))
+                          if (!isNaN(value)) {
+                            const key = paddingType === 'pixel' ? 'paddingPixelY' : 'paddingPercentY'
+                            _set(key, value)
+                          }
+                        }}
+                      />
+                    </div>
+                    <div>{paddingType === 'pixel' ? 'px' : '%'}</div>
+                  </div>
+                </div>
+              </FormGroup>
+            </ToggleBox>
+
+            <FormGroup legendText="水印类型">
               <RadioButtonGroup
                 name="type"
                 valueSelected={type}
@@ -197,8 +330,8 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                   accept={['.jpeg', '.jpg', '.png']}
                   onChange={handleFileChange}
                 />
-                <div className="mt-2 text-xs text-gray-500 leading-relaxed">
-                  仅支持 1M 以下的 .jpg 或 .png
+                <div className="mt-1 text-xs text-gray-500 leading-relaxed">
+                  仅支持 1M 以内的 .jpg 或 .png
                 </div>
                 {isImgLarge && (
                   <InlineNotification
@@ -246,6 +379,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                   <div className="mr-2">
                     <Button
                       hasIconOnly
+                      iconDescription=" "
                       renderIcon={TextBold16}
                       size="small"
                       className="mr-2"
@@ -256,6 +390,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                   <div className="mr-2">
                     <Button
                       hasIconOnly
+                      iconDescription=" "
                       renderIcon={TextItalic16}
                       size="small"
                       className="mr-2"
@@ -281,7 +416,6 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                 </div>
               </FormGroup>
               <FormGroup legendText="区域内文字对齐">
-
                 <div className="flex">
                   <div className="mr-2">
                     <Button {...getAlignButtonProps('X', 'flex-start')} />
@@ -294,54 +428,8 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                     <Button {...getAlignButtonProps('Y', 'flex-end')} />
                   </div>
                 </div>
-
               </FormGroup>
             </ToggleBox>
-
-            <FormGroup legendText="区域大小">
-              <div className="flex items-center">
-                <div className="flex items-center mr-8">
-                  <div>宽</div>
-                  <div className="mx-2">
-                    <NumberInput
-                      id="watermark-width-value"
-                      min={1}
-                      max={25600}
-                      step={1}
-                      invalidText=""
-                      disabled={type === 'image'}
-                      ref={widthInputRef}
-                      value={width}
-                      onChange={() => {
-                        const value = Number(get(widthInputRef, 'current.value'))
-                        if (!isNaN(value)) _set('width', value)
-                      }}
-                    />
-                  </div>
-                  <div>px</div>
-                </div>
-                <div className="flex items-center">
-                  <div>高</div>
-                  <div className="mr-2">
-                    <NumberInput
-                      id="watermark-height-value"
-                      min={1}
-                      max={25600}
-                      step={1}
-                      invalidText=""
-                      disabled={type === 'image'}
-                      ref={heightInputRef}
-                      value={height}
-                      onChange={() => {
-                        const value = Number(get(heightInputRef, 'current.value'))
-                        if (!isNaN(value)) _set('height', value)
-                      }}
-                    />
-                  </div>
-                  <div>px</div>
-                </div>
-              </div>
-            </FormGroup>
 
             <FormGroup legendText="缩放">
               <RadioButtonGroup
@@ -369,26 +457,28 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
 
             <ToggleBox isOpen={scaleType !== 'none'}>
               <FormGroup legendText="缩放基准">
-                <RadioButtonGroup
-                  name="watermark-scale-base"
-                  valueSelected={scaleBase}
-                  onChange={(value: string) => _set('scaleBase', value)}
-                >
-                  <RadioButton
-                    id="watermark-scale-width"
-                    labelText="宽度"
-                    value="width"
-                  />
-                  <RadioButton
-                    id="watermark-scale-height"
-                    labelText="高度"
-                    value="height"
-                  />
-                </RadioButtonGroup>
-              </FormGroup>
-              <FormGroup legendText="缩放至">
                 <div className="flex items-center">
-                  <div className="mr-2">
+                  <div>将水印</div>
+                  <div className="mx-4 pb-1">
+                    <RadioButtonGroup
+                      name="watermark-scale-base"
+                      valueSelected={scaleBase}
+                      onChange={(value: string) => _set('scaleBase', value)}
+                    >
+                      <RadioButton
+                        id="watermark-scale-width"
+                        labelText="宽度"
+                        value="width"
+                      />
+                      <RadioButton
+                        id="watermark-scale-height"
+                        labelText="高度"
+                        value="height"
+                      />
+                    </RadioButtonGroup>
+                  </div>
+                  <div>缩放至</div>
+                  <div className="mx-2">
                     <NumberInput
                       id="watermark-scale-value"
                       min={1}
@@ -406,93 +496,10 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                       }}
                     />
                   </div>
-                  <div>
-                    {scaleType === 'pixel' ? 'px' : '%'}
-                  </div>
+                  <div>{scaleType === 'pixel' ? 'px' : '%'}</div>
                 </div>
-              </FormGroup>
-            </ToggleBox>
-
-            <FormGroup legendText="区域位置">
-              <PositionSelector
-                selected={position}
-                onSelect={p => _set('position', p)}
-              />
-            </FormGroup>
-
-            <FormGroup legendText="位置偏移">
-              <RadioButtonGroup
-                name="watermark-offset"
-                valueSelected={offsetType}
-                onChange={(value: string) => _set('offsetType', value)}
-              >
-                <RadioButton
-                  id="watermark-offset-none"
-                  labelText="不偏移"
-                  value="none"
-                />
-                <RadioButton
-                  id="watermark-offset-pixel"
-                  labelText="固定像素"
-                  value="pixel"
-                />
-                <RadioButton
-                  id="watermark-offset-percent"
-                  labelText="相对百分比"
-                  value="percent"
-                />
-              </RadioButtonGroup>
-            </FormGroup>
-
-            <ToggleBox isOpen={offsetType !== 'none'}>
-              <FormGroup legendText="水平偏移">
-                <div className="flex items-center">
-                  <div className="mr-2">
-                    <NumberInput
-                      id="watermark-offset-value-x"
-                      min={-25600}
-                      max={25600}
-                      step={1}
-                      invalidText=""
-                      ref={offsetXInputRef}
-                      value={offsetType === 'pixel' ? offsetPixelX : offsetPercentX}
-                      onChange={() => {
-                        const value = Number(get(offsetXInputRef, 'current.value'))
-                        if (!isNaN(value)) {
-                          const key = offsetType === 'pixel' ? 'offsetPixelX' : 'offsetPercentX'
-                          _set(key, value)
-                        }
-                      }}
-                    />
-                  </div>
-                  <div>
-                    {offsetType === 'pixel' ? 'px' : '%'}
-                  </div>
-                </div>
-              </FormGroup>
-              <FormGroup legendText="垂直偏移">
-                <div className="flex items-center">
-                  <div className="mr-2">
-                    <NumberInput
-                      id="watermark-offset-value-y"
-                      min={-25600}
-                      max={25600}
-                      step={1}
-                      invalidText=""
-                      ref={offsetYInputRef}
-                      value={offsetType === 'pixel' ? offsetPixelY : offsetPercentY}
-                      onChange={() => {
-                        const value = Number(get(offsetYInputRef, 'current.value'))
-                        if (!isNaN(value)) {
-                          const key = offsetType === 'pixel' ? 'offsetPixelY' : 'offsetPercentY'
-                          _set(key, value)
-                        }
-                      }}
-                    />
-                  </div>
-                  <div>
-                    {offsetType === 'pixel' ? 'px' : '%'}
-                  </div>
+                <div className="mt-1 text-xs text-gray-500 leading-relaxed">
+                  不包含区域填充的部分
                 </div>
               </FormGroup>
             </ToggleBox>
@@ -566,35 +573,5 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
         </div>
       </div>
     </>
-  )
-}
-
-const positionMap = {
-  'left-top': '左上', 'center-top': '上', 'right-top': '右上',
-  'left-center': '左', 'center-center': '中', 'right-center': '右',
-  'left-bottom': '左下', 'center-bottom': '下', 'right-bottom': '右下',
-}
-
-function PositionSelector(props: { selected: string, onSelect: (p: string) => void }) {
-
-  const {
-    selected,
-    onSelect,
-  } = props
-
-  return (
-    <div className="mt-2 flex flex-wrap w-36 text-xs">
-      {Object.entries(positionMap).map(([position, name]) => (
-        <div
-          key={position}
-          className={`w-1/3 h-12 flex justify-center items-center bg-gray-200
-            ${selected === position ? 'text-white bg-gray-900' : 'cursor-pointer hover:bg-gray-400'}
-          `}
-          onClick={() => onSelect(position)}
-        >
-          {name}
-        </div>
-      ))}
-    </div>
   )
 }

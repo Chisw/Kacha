@@ -36,11 +36,11 @@ export interface IWatermark {
   scalePixel: number
   scalePercent: number
   position: PositionType
-  offsetType: SizeChangeType
-  offsetPixelX: number
-  offsetPixelY: number
-  offsetPercentX: number
-  offsetPercentY: number
+  paddingType: SizeChangeType
+  paddingPixelX: number
+  paddingPixelY: number
+  paddingPercentX: number
+  paddingPercentY: number
   repeat: RepeatType
   opacity: number
   rotate: number

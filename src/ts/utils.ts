@@ -218,11 +218,11 @@ export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number, is: boo
     scaleBase,
     scalePixel,
     scalePercent,
-    offsetType,
-    offsetPixelX,
-    offsetPixelY,
-    offsetPercentX,
-    offsetPercentY,
+    paddingType,
+    paddingPixelX,
+    paddingPixelY,
+    paddingPercentX,
+    paddingPercentY,
   } = watermark
 
   let metaWidth = 0
@@ -249,18 +249,18 @@ export const getWatermarkDataURL: (wm: IWatermark, w: number, h: number, is: boo
     metaHeight = height || PREVIEW_HEIGHT_SM
   }
 
-  let offsetX = 0
-  let offsetY = 0
-  if (offsetType === 'pixel') {
-    offsetX = offsetPixelX
-    offsetY = offsetPixelY
-  } else if (offsetType === 'percent') {
-    offsetX = outerWidth * (offsetPercentX / 100)
-    offsetY = outerHeight * (offsetPercentY / 100)
+  let paddingX = 0
+  let paddingY = 0
+  if (paddingType === 'pixel') {
+    paddingX = paddingPixelX
+    paddingY = paddingPixelY
+  } else if (paddingType === 'percent') {
+    paddingX = outerWidth * (paddingPercentX / 100)
+    paddingY = outerHeight * (paddingPercentY / 100)
   }
 
-  const canvasWidth = metaWidth + offsetX * 2
-  const canvasHeight = metaHeight + offsetY * 2
+  const canvasWidth = metaWidth + paddingX * 2
+  const canvasHeight = metaHeight + paddingY * 2
 
   const canvas = document.createElement('canvas')
   canvas.width = canvasWidth

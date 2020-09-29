@@ -123,7 +123,7 @@ export default function ExportSetting(props: ExportSettingProps) {
                 {scaleType === 'pixel' ? 'px' : '%'}
               </div>
             </div>
-            <div className="mt-2 text-xs text-gray-500 leading-relaxed">
+            <div className="mt-1 text-xs text-gray-500 leading-relaxed">
               此为宽度调整，高度将按原宽高比进行相应缩放<br />
               最大仅支持缩放至 25600px
             </div>
