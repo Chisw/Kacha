@@ -5,8 +5,10 @@ import { range } from 'lodash'
 import FileSaver from 'file-saver'
 import IOTable from './IOTable'
 import { getBytesSize } from '../ts/utils'
+import { DateTime } from 'luxon'
 
 interface OutputDialogProps {
+  version: number,
   open: boolean
   onClose: () => void
   watermarkList: IWatermark[]
@@ -14,6 +16,7 @@ interface OutputDialogProps {
 
 export default function OutputDialog(props: OutputDialogProps) {
   const {
+    version,
     open,
     onClose,
     watermarkList,
@@ -35,10 +38,10 @@ export default function OutputDialog(props: OutputDialogProps) {
   const handleOutput = useCallback(async () => {
     setIsOutputting(true)
     const blob = new Blob([selectedJSON], { type: "text/plain;charset=utf-8" })
-    await FileSaver.saveAs(blob, `${Date.now()}.kacha`)
+    await FileSaver.saveAs(blob, `kacha.jisuowei.com_v${version}_${DateTime.fromMillis(Date.now()).toFormat('yyyyMMdd_HHmmss')}.kacha`)
     setIsOutputting(false)
     onClose()
-  }, [onClose, selectedJSON])
+  }, [onClose, selectedJSON, version])
 
   return (
     <>

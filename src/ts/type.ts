@@ -22,6 +22,7 @@ export interface IExportSettingg {
 }
 
 export interface IWatermark {
+  version: number
   id: string
   title: string
   theme: ThemeType

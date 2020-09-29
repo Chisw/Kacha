@@ -4,13 +4,14 @@ import { DEFAULT_WATERMARK_LIST, PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM, EMPTY_WATE
 import { Button, Loading, Modal } from 'carbon-components-react'
 import EditorDialog from './EditorDialog'
 import Preview from './Preview'
-import { Upload16, Download16, Home16, Add16 } from '@carbon/icons-react'
+import { Upload16, Download16, Home16, Add16, Share16 } from '@carbon/icons-react'
 import { useAsync } from 'react-use'
 import { IWatermark } from '../ts/type'
 import Local from '../ts/local'
-import { getShortId } from '../ts/utils'
+import { getShortId, getBytesSize } from '../ts/utils'
 import OutputDialog from './OutputDialog'
 import InputDialog from './InputDialog'
+import ShareDialog from './ShareDialog'
 
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-300 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -25,6 +26,7 @@ export default function WatermarkList(props: WatermarkListProps) {
     setActiveWatermark,
   } = props
 
+  const [version] = useState(0)
   const [loaded, setLoaded] = useState(false)
   const [watermarkList, setWatermarkList] = useState<IWatermark[]>([])
   const [operateWatermark, setOperateWatermark] = useState<IWatermark>(EMPTY_WATERMARK)
@@ -34,6 +36,7 @@ export default function WatermarkList(props: WatermarkListProps) {
   const [outputOpen, setOutputOpen] = useState(false)
   const [inputOpen, setInputOpen] = useState(false)
   const [operating, setOperating] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
 
   useAsync(async () => {
     const list = await Local.getList()
@@ -77,9 +80,14 @@ export default function WatermarkList(props: WatermarkListProps) {
           <Button size="small" renderIcon={Add16} kind="secondary" onClick={handleAdd}>创建</Button>
           <Button size="small" renderIcon={Download16} kind="secondary" onClick={() => setOutputOpen(true)}>导出</Button>
           <Button size="small" renderIcon={Upload16} kind="secondary" onClick={() => setInputOpen(true)}>导入</Button>
+          <Button size="small" renderIcon={Share16} kind="secondary" hasIconOnly iconDescription=" " onClick={() => setShareOpen(true)} />
         </div>
         <div className="text-gray-400">
           &times;{watermarkList.length}
+          &emsp;
+          {getBytesSize(JSON.stringify(watermarkList).length)}
+          &emsp;
+          V{version}
         </div>
       </div>
 
@@ -195,15 +203,22 @@ export default function WatermarkList(props: WatermarkListProps) {
       </Modal>
 
       <OutputDialog
+        version={version}
         open={outputOpen}
         onClose={() => setOutputOpen(false)}
         watermarkList={watermarkList}
       />
 
       <InputDialog
+        version={version}
         open={inputOpen}
         onClose={() => setInputOpen(false)}
         setWatermarkList={setWatermarkList}
+      />
+
+      <ShareDialog
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
       />
 
       <style>

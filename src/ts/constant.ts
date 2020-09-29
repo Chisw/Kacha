@@ -7,6 +7,7 @@ export const PREVIEW_WIDTH_SM = 300
 export const PREVIEW_HEIGHT_SM = 160
 
 export const EMPTY_WATERMARK: IWatermark = {
+  version: 0,
   id: '',
   title: '',
   theme: 'dark',
@@ -48,6 +49,7 @@ export const EMPTY_WATERMARK: IWatermark = {
 
 export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
   {
+    version: 0,
     id: 'test01',
     title: 'kacha',
     theme: 'dark',
@@ -87,6 +89,7 @@ export const DEFAULT_WATERMARK_LIST: IWatermark[] = [
     }
   },
   {
+    version: 0,
     id: 'test02',
     title: 'test',
     theme: 'light',

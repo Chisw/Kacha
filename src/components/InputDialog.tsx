@@ -8,6 +8,7 @@ import Local from '../ts/local'
 import IOTable from './IOTable'
 
 interface InputDialogProps {
+  version: number,
   open: boolean
   onClose: () => void
   setWatermarkList: (list: IWatermark[]) => void

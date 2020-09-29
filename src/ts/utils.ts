@@ -1,11 +1,20 @@
 import { IWatermark, IWatermarkMeta } from './type'
-import { isString } from 'lodash'
+import { isString, isNumber } from 'lodash'
 import { PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM } from './constant'
 
 export const getShortId = (n?: number) => Array
   .from('*'.repeat(n || 6))
   .map(() => Math.random().toString(36)[2])
   .join('')
+
+export const copy = (str: string) => {
+  const input = document.createElement('input')
+  document.body.appendChild(input)
+  input.value = str
+  input.select()
+  document.execCommand('Copy')
+  document.body.removeChild(input)
+}
 
 export const getTypeBase64Bytes = (typeBase64: string) => {
   if (!typeBase64) return 0
@@ -89,7 +98,8 @@ export const RGB2HEX = (rgb: string) => {
 }
 
 export const isWatermark = (obj: any) => {
-  return isString(obj.id)
+  return  isNumber(obj.version)
+    && isString(obj.id)
     && isString(obj.title)
     && isString(obj.type)
     && isString(obj.theme)
