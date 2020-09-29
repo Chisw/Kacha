@@ -165,7 +165,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               <Checkbox
                 id="show-outline"
                 name="show-outline"
-                labelText="显示水印占据的区域轮廓虚线"
+                labelText="显示水印占据的区域轮廓线"
                 checked={showOutline}
                 onChange={(checked) => _set('showOutline', checked)}
               />
@@ -327,11 +327,11 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               <FormGroup legendText="图片">
                 <FileUploaderButton
                   labelText="选择图片"
-                  accept={['.jpeg', '.jpg', '.png']}
+                  accept={['.jpeg', '.jpg', '.png', '.svg']}
                   onChange={handleFileChange}
                 />
                 <div className="mt-1 text-xs text-gray-500 leading-relaxed">
-                  仅支持 1M 以内的 .jpg 或 .png
+                  支持 1M 以内的 JPG, PNG, SVG
                 </div>
                 {isImgLarge && (
                   <InlineNotification
@@ -344,7 +344,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               </FormGroup>
             </ToggleBox>
 
-            <ToggleBox isOpen={type === 'text'} maxHeight={800}>
+            <ToggleBox isOpen={type === 'text'} maxHeight={500}>
               <FormGroup legendText="文本">
                 <TextInput
                   id="text"
@@ -354,8 +354,17 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                   onChange={(e: any) => _set('text', e.target.value)}
                 />
               </FormGroup>
-              <FormGroup legendText="字体大小">
+              <FormGroup legendText="本地字体及字体大小">
                 <div className="flex items-center">
+                  <div className="mr-4">
+                    <TextInput
+                      id="font-family"
+                      labelText=""
+                      placeholder="请输入本地字体名称"
+                      value={fontFamily}
+                      onChange={(e: any) => _set('fontFamily', e.target.value)}
+                    />
+                  </div>
                   <div className="mr-2">
                     <NumberInput
                       id="watermark-font-size"
@@ -374,8 +383,18 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                   <div>px</div>
                 </div>
               </FormGroup>
-              <FormGroup legendText="字体风格及颜色">
+              <FormGroup legendText="字体对齐、风格及颜色">
                 <div className="flex items-center">
+                  <div className="mr-2">
+                    <Button {...getAlignButtonProps('X', 'flex-start')} />
+                    <Button {...getAlignButtonProps('X', 'center')} />
+                    <Button {...getAlignButtonProps('X', 'flex-end')} />
+                  </div>
+                  <div className="mr-2">
+                    <Button {...getAlignButtonProps('Y', 'flex-start')} />
+                    <Button {...getAlignButtonProps('Y', 'center')} />
+                    <Button {...getAlignButtonProps('Y', 'flex-end')} />
+                  </div>
                   <div className="mr-2">
                     <Button
                       hasIconOnly
@@ -412,20 +431,6 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                     <span>
                       {fontColor || '#000000'}
                     </span>
-                  </div>
-                </div>
-              </FormGroup>
-              <FormGroup legendText="区域内文字对齐">
-                <div className="flex">
-                  <div className="mr-2">
-                    <Button {...getAlignButtonProps('X', 'flex-start')} />
-                    <Button {...getAlignButtonProps('X', 'center')} />
-                    <Button {...getAlignButtonProps('X', 'flex-end')} />
-                  </div>
-                  <div className="mr-2">
-                    <Button {...getAlignButtonProps('Y', 'flex-start')} />
-                    <Button {...getAlignButtonProps('Y', 'center')} />
-                    <Button {...getAlignButtonProps('Y', 'flex-end')} />
                   </div>
                 </div>
               </FormGroup>
