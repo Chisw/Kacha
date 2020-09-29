@@ -120,6 +120,8 @@ export const drawMeta2Canvas = async (meta: IWatermarkMeta, canvas: HTMLCanvasEl
       fontFamily,
       fontAlignX,
       fontAlignY,
+      fontWeight,
+      fontStyle,
     },
     metaWidth,
     metaHeight,
@@ -175,6 +177,8 @@ export const drawMeta2Canvas = async (meta: IWatermarkMeta, canvas: HTMLCanvasEl
                     font-size: ${fontSize}px;
                     color: ${HEX2RGB(fontColor)};
                     font-family: ${fontFamily};
+                    font-weight: ${fontWeight};
+                    font-style: ${fontStyle};
                     width: ${metaWidth}px;
                     height: ${metaHeight}px;
                     opacity: ${opacity / 100};

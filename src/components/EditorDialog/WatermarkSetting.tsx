@@ -1,11 +1,22 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { IWatermark } from '../../ts/type'
-import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput, Slider, InlineNotification, Checkbox } from 'carbon-components-react'
+import { IWatermark, AlignType, WeightType, StyleType } from '../../ts/type'
+import { FormGroup, RadioButtonGroup, RadioButton, TextInput, NumberInput, Slider, InlineNotification, Checkbox, Button } from 'carbon-components-react'
 import { FileUploaderButton} from 'carbon-components-react'
 import ToggleBox from '../ToggleBox'
 import { get } from 'lodash'
 import Preview from '../Preview'
 import { getImageByDataURL } from '../../ts/utils'
+import {
+  AlignHorizontalLeft16,
+  AlignHorizontalCenter16,
+  AlignHorizontalRight16,
+  AlignVerticalTop16,
+  AlignVerticalCenter16,
+  AlignVerticalBottom16,
+  TextBold16,
+  TextItalic16,
+  CarbonIconType,
+} from '@carbon/icons-react'
 
 interface WatermarkSettingProps {
   watermark: IWatermark,
@@ -45,6 +56,8 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     fontFamily,
     fontAlignX,
     fontAlignY,
+    fontWeight,
+    fontStyle,
   } = watermark
 
   const widthInputRef = useRef<any>(null)
@@ -60,6 +73,20 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
   const _set = useCallback((key: string, value: any) => {
     setWatermark(Object.assign({}, watermark, { [key]: value }))
   }, [watermark, setWatermark])
+
+  const getAlignButtonProps = useCallback((align: 'X' | 'Y', alignType: AlignType) => {
+    const { key, icons } = {
+      X: { key: 'fontAlignX', icons: [AlignHorizontalLeft16, AlignHorizontalCenter16, AlignHorizontalRight16] },
+      Y: { key: 'fontAlignY', icons: [AlignVerticalTop16, AlignVerticalCenter16, AlignVerticalBottom16] },
+    }[align] as { key: 'fontAlignX' | 'fontAlignY', icons: CarbonIconType[]}
+    return {
+      hasIconOnly: true,
+      size: 'small',
+      kind: (align === 'X' ? fontAlignX : fontAlignY) === alignType ? 'primary' : 'secondary',
+      renderIcon: icons[['flex-start', 'center', 'flex-end'].indexOf(alignType)],
+      onClick: () => _set(key, alignType),
+    }
+  }, [_set, fontAlignX, fontAlignY])
 
   const getDataByFile = useCallback<{ dataURL: string, width: number, height: number} | any>(async (file: any) => {
     return new Promise((resolve, reject) => {
@@ -100,7 +127,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
     <>
       <div className="mt-4 flex">
         <div className="w-1/2 pr-4">
-          <div style={{ maxWidth: 400 }}>
+          <div style={{ maxWidth: 480 }}>
             <FormGroup legendText="标题">
               <TextInput
                 id="title"
@@ -135,7 +162,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
               <Checkbox
                 id="show-outline"
                 name="show-outline"
-                labelText="显示水印占据的空间轮廓虚线"
+                labelText="显示水印占据的区域轮廓虚线"
                 checked={showOutline}
                 onChange={(checked) => _set('showOutline', checked)}
               />
@@ -211,113 +238,108 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                       }}
                     />
                   </div>
-                  <div className="pt-2">px</div>
+                  <div>px</div>
                 </div>
               </FormGroup>
-              <FormGroup legendText="字体颜色">
+              <FormGroup legendText="字体风格及颜色">
                 <div className="flex items-center">
-                  <input
-                    type="color"
-                    id="font-color"
-                    name="font-color"
-                    value={fontColor || '#000000'}
-                    onChange={handleColorChange}
-                  >
-                  </input>
-                  <span className="ml-2">
-                    {fontColor || '#000000'}
-                  </span>
+                  <div className="mr-2">
+                    <Button
+                      hasIconOnly
+                      renderIcon={TextBold16}
+                      size="small"
+                      className="mr-2"
+                      kind={fontWeight === 'bold' ? 'primary' : 'tertiary'}
+                      onClick={() => _set('fontWeight', ['normal', 'bold'].find(w => w !== fontWeight) as WeightType)}
+                    />
+                  </div>
+                  <div className="mr-2">
+                    <Button
+                      hasIconOnly
+                      renderIcon={TextItalic16}
+                      size="small"
+                      className="mr-2"
+                      kind={fontStyle === 'italic' ? 'primary' : 'tertiary'}
+                      onClick={() => _set('fontStyle', ['normal', 'italic'].find(w => w !== fontStyle) as StyleType)}
+                    />
+                  </div>
+                  <div className="mr-2">
+                    <input
+                      type="color"
+                      id="font-color"
+                      name="font-color"
+                      value={fontColor || '#000000'}
+                      onChange={handleColorChange}
+                    >
+                    </input>
+                  </div>
+                  <div className="mr-2">
+                    <span>
+                      {fontColor || '#000000'}
+                    </span>
+                  </div>
                 </div>
               </FormGroup>
-              <FormGroup legendText="字体水平对齐">
-                <RadioButtonGroup
-                  name="fontAlignX"
-                  valueSelected={fontAlignX}
-                  onChange={(value: string) => _set('fontAlignX', value)}
-                >
-                  <RadioButton
-                    id="align-x-flex-start"
-                    labelText="居左"
-                    value="flex-start"
-                  />
-                  <RadioButton
-                    id="align-x-center"
-                    labelText="居中"
-                    value="center"
-                  />
-                  <RadioButton
-                    id="align-x-flex-end"
-                    labelText="居右"
-                    value="flex-end"
-                  />
-                </RadioButtonGroup>
-              </FormGroup>
-              <FormGroup legendText="字体垂直对齐">
-                <RadioButtonGroup
-                  name="fontAlignY"
-                  valueSelected={fontAlignY}
-                  onChange={(value: string) => _set('fontAlignY', value)}
-                >
-                  <RadioButton
-                    id="align-y-flex-start"
-                    labelText="居顶"
-                    value="flex-start"
-                  />
-                  <RadioButton
-                    id="align-y-center"
-                    labelText="居中"
-                    value="center"
-                  />
-                  <RadioButton
-                    id="align-y-flex-end"
-                    labelText="居底"
-                    value="flex-end"
-                  />
-                </RadioButtonGroup>
+              <FormGroup legendText="区域内文字对齐">
+
+                <div className="flex">
+                  <div className="mr-2">
+                    <Button {...getAlignButtonProps('X', 'flex-start')} />
+                    <Button {...getAlignButtonProps('X', 'center')} />
+                    <Button {...getAlignButtonProps('X', 'flex-end')} />
+                  </div>
+                  <div className="mr-2">
+                    <Button {...getAlignButtonProps('Y', 'flex-start')} />
+                    <Button {...getAlignButtonProps('Y', 'center')} />
+                    <Button {...getAlignButtonProps('Y', 'flex-end')} />
+                  </div>
+                </div>
+
               </FormGroup>
             </ToggleBox>
 
-            <FormGroup legendText="宽度">
+            <FormGroup legendText="区域大小">
               <div className="flex items-center">
-                <div className="mr-2">
-                  <NumberInput
-                    id="watermark-width-value"
-                    min={1}
-                    max={25600}
-                    step={1}
-                    invalidText=""
-                    disabled={type === 'image'}
-                    ref={widthInputRef}
-                    value={width}
-                    onChange={() => {
-                      const value = Number(get(widthInputRef, 'current.value'))
-                      if (!isNaN(value)) _set('width', value)
-                    }}
-                  />
+                <div className="flex items-center mr-8">
+                  <div>宽</div>
+                  <div className="mx-2">
+                    <NumberInput
+                      id="watermark-width-value"
+                      min={1}
+                      max={25600}
+                      step={1}
+                      invalidText=""
+                      disabled={type === 'image'}
+                      ref={widthInputRef}
+                      value={width}
+                      onChange={() => {
+                        const value = Number(get(widthInputRef, 'current.value'))
+                        if (!isNaN(value)) _set('width', value)
+                      }}
+                    />
+                  </div>
+                  <div>px</div>
                 </div>
-                <div className="pt-2">px</div>
-              </div>
-            </FormGroup>
-
-            <FormGroup legendText="高度">
-              <div className="flex items-center">
-                <div className="mr-2">
-                  <NumberInput
-                    id="watermark-height-value"
-                    min={1}
-                    max={25600}
-                    step={1}
-                    invalidText=""
-                    disabled={type === 'image'}
-                    ref={heightInputRef}
-                    value={height}
-                    onChange={() => {
-                      const value = Number(get(heightInputRef, 'current.value'))
-                      if (!isNaN(value)) _set('height', value)
-                    }}
-                  />
+                <div className="flex items-center">
+                  <div>高</div>
+                  <div className="mr-2">
+                    <NumberInput
+                      id="watermark-height-value"
+                      min={1}
+                      max={25600}
+                      step={1}
+                      invalidText=""
+                      disabled={type === 'image'}
+                      ref={heightInputRef}
+                      value={height}
+                      onChange={() => {
+                        const value = Number(get(heightInputRef, 'current.value'))
+                        if (!isNaN(value)) _set('height', value)
+                      }}
+                    />
+                  </div>
+                  <div>px</div>
                 </div>
-                <div className="pt-2">px</div>
               </div>
             </FormGroup>
 
@@ -384,14 +406,14 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                       }}
                     />
                   </div>
-                  <div className="pt-2">
+                  <div>
                     {scaleType === 'pixel' ? 'px' : '%'}
                   </div>
                 </div>
               </FormGroup>
             </ToggleBox>
 
-            <FormGroup legendText="位置">
+            <FormGroup legendText="区域位置">
               <PositionSelector
                 selected={position}
                 onSelect={p => _set('position', p)}
@@ -443,7 +465,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                       }}
                     />
                   </div>
-                  <div className="pt-2">
+                  <div>
                     {offsetType === 'pixel' ? 'px' : '%'}
                   </div>
                 </div>
@@ -468,7 +490,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                       }}
                     />
                   </div>
-                  <div className="pt-2">
+                  <div>
                     {offsetType === 'pixel' ? 'px' : '%'}
                   </div>
                 </div>
@@ -488,12 +510,12 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                 />
                 <RadioButton
                   id="watermark-repeat-x"
-                  labelText="横向"
+                  labelText="水平"
                   value="repeat-x"
                 />
                 <RadioButton
                   id="watermark-repeat-y"
-                  labelText="纵向"
+                  labelText="垂直"
                   value="repeat-y"
                 />
                 <RadioButton
@@ -514,7 +536,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                     onChange={({ value }) => _set('opacity', value)}
                   />
                 </div>
-                <div className="pt-2">
+                <div>
                   %
                 </div>
               </div>
@@ -530,7 +552,7 @@ export default function WatermarkSetting(props: WatermarkSettingProps) {
                     onChange={({ value }) => _set('rotate', value)}
                   />
                 </div>
-                <div className="pt-2">
+                <div>
                   °
                 </div>
               </div>

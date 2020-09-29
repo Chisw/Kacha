@@ -4,7 +4,7 @@ import { DEFAULT_WATERMARK_LIST, PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM, EMPTY_WATE
 import { Button, Loading, Modal } from 'carbon-components-react'
 import EditorDialog from './EditorDialog'
 import Preview from './Preview'
-import { Export16, Download16, Home16, Add16 } from '@carbon/icons-react'
+import { Upload16, Download16, Home16, Add16 } from '@carbon/icons-react'
 import { useAsync } from 'react-use'
 import { IWatermark } from '../ts/type'
 import Local from '../ts/local'
@@ -74,9 +74,9 @@ export default function WatermarkList(props: WatermarkListProps) {
       <div className="pb-8 flex justify-between items-center">
         <div className="button-list">
           <Button size="small" renderIcon={Home16}>水印屋</Button>
-          <Button size="small" renderIcon={Add16} kind="secondary" onClick={handleAdd}>创建水印</Button>
-          <Button size="small" renderIcon={Download16} kind="secondary" onClick={() => setOutputOpen(true)}>导出水印配置</Button>
-          <Button size="small" renderIcon={Export16} kind="secondary" onClick={() => setInputOpen(true)}>导入水印配置</Button>
+          <Button size="small" renderIcon={Add16} kind="secondary" onClick={handleAdd}>创建</Button>
+          <Button size="small" renderIcon={Download16} kind="secondary" onClick={() => setOutputOpen(true)}>导出</Button>
+          <Button size="small" renderIcon={Upload16} kind="secondary" onClick={() => setInputOpen(true)}>导入</Button>
         </div>
         <div className="text-gray-400">
           &times;{watermarkList.length}

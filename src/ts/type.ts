@@ -5,6 +5,8 @@ export type SizeChangeType = 'none' | 'pixel' | 'percent'
 export type ScaleBaseType = 'width' | 'height'
 export type RepeatType = 'no-repeat' | 'repeat-x' | 'repeat-y' | 'repeat'
 export type AlignType = 'flex-start' | 'center' | 'flex-end'
+export type WeightType = 'normal' | 'bold'
+export type StyleType = 'normal' | 'italic'
 export type PositionType =
   'left-top' | 'center-top' | 'right-top' |
   'center-left' | 'center-center' | 'center-right' |
@@ -47,6 +49,8 @@ export interface IWatermark {
   fontFamily: string
   fontAlignX: AlignType
   fontAlignY: AlignType
+  fontWeight: WeightType
+  fontStyle: StyleType
   exportSetting: IExportSettingg
 }
 

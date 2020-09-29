@@ -111,6 +111,10 @@ export default function EditorDialog(props: EditorDialogProps) {
           .bx--tab-content {
             margin-top: 40px;
           }
+          .bx--btn--icon-only::before,
+          .bx--btn--icon-only .bx--assistive-text {
+            display: none !important;
+          }
         `}
       </style>
     </>
