@@ -48,7 +48,7 @@ export default function InputDialog(props: InputDialogProps) {
       reader.onload = (e: any) => {
         try {
           const data: IWatermark[] = JSON.parse(e.target.result)
-          if (isArray(data) && data[0] && isWatermark(data[0])) {
+          if (isArray(data) && data.every(w => isWatermark(w))) {
             setInputWatermarkList(data)
           } else {
             setInputError('啊哦，出错了')

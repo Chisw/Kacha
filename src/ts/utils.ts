@@ -10,7 +10,7 @@ export const getShortId = (n?: number) => Array
 export const copy = (str: string) => {
   const input = document.createElement('input')
   document.body.appendChild(input)
-  input.value = str
+  input.setAttribute('value', str)
   input.select()
   document.execCommand('Copy')
   document.body.removeChild(input)

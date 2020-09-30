@@ -1,17 +1,16 @@
 import React, { useCallback, useState } from 'react'
 import Icons from '../images/icons'
 import { DEFAULT_WATERMARK_LIST, PREVIEW_WIDTH_SM, PREVIEW_HEIGHT_SM, EMPTY_WATERMARK } from '../ts/constant'
-import { Button, Loading, Modal } from 'carbon-components-react'
+import { Button, Loading, Modal, Tooltip } from 'carbon-components-react'
 import EditorDialog from './EditorDialog'
 import Preview from './Preview'
-import { Upload16, Download16, Home16, Add16, Share16 } from '@carbon/icons-react'
+import { Upload16, Download16, Home16, Add16, Share16, Copy16 } from '@carbon/icons-react'
 import { useAsync } from 'react-use'
 import { IWatermark } from '../ts/type'
 import Local from '../ts/local'
-import { getShortId, getBytesSize } from '../ts/utils'
+import { getShortId, getBytesSize, copy } from '../ts/utils'
 import OutputDialog from './OutputDialog'
 import InputDialog from './InputDialog'
-import ShareDialog from './ShareDialog'
 
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-300 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -80,7 +79,29 @@ export default function WatermarkList(props: WatermarkListProps) {
           <Button size="small" renderIcon={Add16} kind="secondary" onClick={handleAdd}>创建</Button>
           <Button size="small" renderIcon={Download16} kind="secondary" onClick={() => setOutputOpen(true)}>导出</Button>
           <Button size="small" renderIcon={Upload16} kind="secondary" onClick={() => setInputOpen(true)}>导入</Button>
-          <Button size="small" renderIcon={Share16} kind="secondary" hasIconOnly iconDescription=" " onClick={() => setShareOpen(true)} />
+          &emsp;
+          <Tooltip
+            triggerText={(
+              <Button size="small" renderIcon={Share16} kind="secondary" hasIconOnly iconDescription=" " onClick={() => setShareOpen(!shareOpen)} />
+            )}
+            showIcon={false}
+            open={shareOpen}
+          >
+            <div className="flex items-center">
+              <span className="flex-grow">http://k.jsw.im</span>
+              <Button
+                size="small"
+                renderIcon={Copy16}
+                kind="secondary"
+                hasIconOnly
+                iconDescription=" "
+                onClick={() => {
+                  copy('http://k.jsw.im')
+                  setShareOpen(false)
+                }}
+              />
+            </div>
+        </Tooltip>
         </div>
         <div className="text-gray-400">
           &times;{watermarkList.length}
@@ -214,11 +235,6 @@ export default function WatermarkList(props: WatermarkListProps) {
         open={inputOpen}
         onClose={() => setInputOpen(false)}
         setWatermarkList={setWatermarkList}
-      />
-
-      <ShareDialog
-        open={shareOpen}
-        onClose={() => setShareOpen(false)}
       />
 
       <style>
