@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from 'carbon-components-react'
+import { Button, FileUploaderButton } from 'carbon-components-react'
 import { Reset16 } from '@carbon/icons-react'
 import { IWatermark } from '../ts/type'
 import Preview from './Preview'
@@ -18,10 +18,36 @@ export default function WatermarkMaker(props: WatermarkMakerProps) {
 
   return (
     <>
-      <Button size="small" renderIcon={Reset16} onClick={() => setActiveWatermark(null)}>重选</Button>
-      <div className="py-4">
+      <div className="flex items-start">
         <div className="w-64">
-          <Preview watermark={activeWatermark} />
+          <div className="pr-8 pb-4">
+            <Preview watermark={activeWatermark} />
+          </div>
+          <Button
+            size="small"
+            renderIcon={Reset16}
+            onClick={() => setActiveWatermark(null)}
+          >
+            重选
+          </Button>
+          <Button
+            size="small"
+            onClick={() => setActiveWatermark(null)}
+          >
+            开始运行
+          </Button>
+        </div>
+        <div className="flex-grow">
+          <FileUploaderButton
+            labelText="选择文件夹"
+            accept={['.jpeg', '.jpg', '.png']}
+            onChange={() => { }}
+          />
+          <FileUploaderButton
+            labelText="选择图片"
+            accept={['.jpeg', '.jpg', '.png']}
+            onChange={() => {}}
+          />
         </div>
       </div>
     </>
