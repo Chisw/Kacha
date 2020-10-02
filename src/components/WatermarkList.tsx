@@ -8,9 +8,10 @@ import { Upload16, Download16, Home16, Add16, Share16, Copy16 } from '@carbon/ic
 import { useAsync } from 'react-use'
 import { IWatermark } from '../ts/type'
 import Local from '../ts/local'
-import { getShortId, getBytesSize, copy } from '../ts/utils'
+import { getShortId, getBytesSize } from '../ts/utils'
 import OutputDialog from './OutputDialog'
 import InputDialog from './InputDialog'
+import CopyToClipboard from 'react-copy-to-clipboard'
 
 const HOVER_CLASS = 'flex justify-center items-center hover:bg-white-300 transition-all duration-300 active:duration-75 active:bg-transparent cursor-pointer'
 
@@ -72,7 +73,6 @@ export default function WatermarkList(props: WatermarkListProps) {
   return (
     <>
       {!loaded && <Loading />}
-
       <div className="pb-8 flex justify-between items-center">
         <div className="button-list">
           <Button size="small" renderIcon={Home16}>水印屋</Button>
@@ -87,21 +87,31 @@ export default function WatermarkList(props: WatermarkListProps) {
             showIcon={false}
             open={shareOpen}
           >
-            <div className="flex items-center">
-              <span className="flex-grow">http://k.jsw.im</span>
-              <Button
-                size="small"
-                renderIcon={Copy16}
-                kind="secondary"
-                hasIconOnly
-                iconDescription=" "
-                onClick={() => {
-                  copy('http://k.jsw.im')
-                  setShareOpen(false)
-                }}
-              />
+            <div className="flex items-center text-xs">
+              <span className="mr-2 flex-grow">http://k.jsw.im</span>
+              <CopyToClipboard text="http://k.jsw.im" onCopy={() => setShareOpen(false)}>
+                <Button
+                  size="small"
+                  renderIcon={Copy16}
+                  kind="secondary"
+                  hasIconOnly
+                  iconDescription=" "
+                />
+              </CopyToClipboard>
             </div>
-        </Tooltip>
+            <div className="mt-4 flex items-center text-xs">
+              <span className="mr-2 flex-grow">https://kacha.jisuowei.com</span>
+              <CopyToClipboard text="https://kacha.jisuowei.com" onCopy={() => setShareOpen(false)}>
+                <Button
+                  size="small"
+                  renderIcon={Copy16}
+                  kind="secondary"
+                  hasIconOnly
+                  iconDescription=" "
+                />
+              </CopyToClipboard>
+            </div>
+          </Tooltip>
         </div>
         <div className="text-gray-400">
           &times;{watermarkList.length}
