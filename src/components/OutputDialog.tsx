@@ -27,9 +27,10 @@ export default function OutputDialog(props: OutputDialogProps) {
   const [isOutputting, setIsOutputting] = useState(false)
 
   useEffect(() => {
+    watermarkList.map(w => w.version = version)
     const json = JSON.stringify(watermarkList.filter((w, i) => selectedIndex.includes(i)))
     setSelectedJSON(json)
-  }, [selectedIndex, watermarkList])
+  }, [selectedIndex, watermarkList, version])
 
   useEffect(() => {
     setSelectedIndex(range(watermarkList.length))

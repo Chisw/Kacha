@@ -51,10 +51,10 @@ export default function InputDialog(props: InputDialogProps) {
           if (isArray(data) && data.every(w => isWatermark(w))) {
             setInputWatermarkList(data)
           } else {
-            setInputError('啊哦，出错了')
+            setInputError('INVALID')
           }
         } catch(error) {
-          setInputError('啊哦，出错了')
+          setInputError('TRY ERROR')
         }
       }
       reader.readAsText(uploadFile)
@@ -91,7 +91,7 @@ export default function InputDialog(props: InputDialogProps) {
       >
         {uploadFile ? (
           <div className="flex items-center">
-            <div className="flex-grow px-4 truncate">
+            <div className="flex-grow px-4 text-xs truncate">
               <span className="mr-2">{uploadFile.name}</span>
               {inputError && <Tag type="red">{inputError}</Tag>}
             </div>
