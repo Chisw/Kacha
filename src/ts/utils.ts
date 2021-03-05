@@ -143,7 +143,7 @@ export const drawMeta2Canvas = async (meta: IWatermarkMeta, canvas: HTMLCanvasEl
     svgImg.height = height
     svgImg.onload = () => {
       ctx!.drawImage(svgImg, 0, 0, width, height)
-      resolve()
+      resolve(true)
     }
     svgImg.onerror = reject
     svgImg.src = `data:image/svg+xml;charset=utf-8,
@@ -300,7 +300,7 @@ export const drawWatermark2Canvas = async (watermark: IWatermark, canvas: HTMLCa
     svgImg.height = height
     svgImg.onload = () => {
       ctx!.drawImage(svgImg, 0, 0, width, height)
-      resolve()
+      resolve(true)
     }
     svgImg.onerror = reject
     svgImg.src = `data:image/svg+xml;charset=utf-8,
