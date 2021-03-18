@@ -42,7 +42,6 @@
   },
   "scripts": {
     "start": "craco start",
-    "start:oss": "craco start & cd ../../oss && anywhere",
     "build": "craco build",
     "test": "craco test"
   },
